@@ -1,0 +1,32 @@
+%sparse_table yes;
+%lexical_token_class_name Token;
+%generate_semantics_analyzer yes;
+%start_symbol calculator;
+
+calculator: statement*;
+
+statement: t_symbol t_assign expression = set_variable($0, $2)
+         | function
+         ;
+
+function: t_symbol t_parenthesis_l arguments t_parenthesis_r = function($0, $2);
+
+arguments: expression (t_comma expression)* = ($0, *$1($1));
+
+expression: expression (t_plus | t_minus) expression_high = compute($0, *$1, $2)
+          | expression_high
+          ;
+
+expression_high: expression_high (t_times | t_divide) expression_top = compute($0, *$1, $2)
+               | expression_top
+               ;
+
+expression_top: expression_top t_power expression_final = compute($0, $1, $2)
+              | expression_final
+              ;
+
+expression_final: t_parenthesis_l expression t_parenthesis_r = expression($1)
+                | function
+                | t_symbol = get_variable($0)
+                | t_number = number($0)
+                ;
