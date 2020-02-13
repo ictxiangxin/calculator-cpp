@@ -69,36 +69,36 @@ public:
     Tokenizer() = default;
 
     std::vector<Token> &token_list() {
-        return this->__token_list;
+        return this->_token_list;
     }
 
     void skip() {
-        this->__skip = true;
+        this->_skip = true;
     }
 
     void newline() {
-        this->__line++;
+        this->_line++;
     }
 
     int error_line() {
-        return __error_line;
+        return _error_line;
     }
 
     int no_error_line() {
-        return __no_error_line;
+        return _no_error_line;
     }
 
     int tokenize(std::string text) {
-        this->__token_list.clear();
-        this->__line = 1;
-        int state = this->__start_state;
+        this->_token_list.clear();
+        this->_line = 1;
+        int state = this->_start_state;
         std::string token_string;
         unsigned long index = 0;
         while (index < text.length()) {
             char character = text[index];
             index++;
             bool get_token = false;
-            if (this->__non_greedy_state_set.count(state)) {
+            if (this->_non_greedy_state_set.count(state)) {
                 get_token = true;
             }
             if (this->_move_table_attribute.count(state)) {
@@ -120,7 +120,7 @@ public:
                         }
                     } else {
                         condition = character_set.count(character);
-                        if (attribute == 1 && this->__character_set.count(character) == 0) {
+                        if (attribute == 1 && this->_character_set.count(character) == 0) {
                             condition = true;
                         }
                         for (auto & range : range_list) {
@@ -137,112 +137,112 @@ public:
                     }
                 }
                 if (i == attribute_list.size()) {
-                    if (this->__end_state_set.count(state)) {
+                    if (this->_end_state_set.count(state)) {
                         get_token = true;
                     } else {
-                        this->__error_line = this->__line;
-                        return this->__error_line;
+                        this->_error_line = this->_line;
+                        return this->_error_line;
                     }
                 }
             } else {
-                if (this->__end_state_set.count(state)) {
+                if (this->_end_state_set.count(state)) {
                     get_token = true;
                 } else {
-                    this->__error_line = this->__line;
-                    return this->__error_line;
+                    this->_error_line = this->_line;
+                    return this->_error_line;
                 }
             }
             if (get_token) {
                 this->_generate_token(state, token_string);
                 token_string = "";
-                state = this->__start_state;
+                state = this->_start_state;
                 index--;
             }
         }
-        if (this->__end_state_set.count(state)) {
+        if (this->_end_state_set.count(state)) {
             this->_generate_token(state, token_string);
         } else {
             throw std::runtime_error("Invalid state.");
         }
-        this->__token_list.emplace_back("", this->__line, "$");
-        return this->__error_line;
+        this->_token_list.emplace_back("", this->_line, "$");
+        return this->_error_line;
     }
 
     void lexical_function_entity(std::string &function_name, lexical_function &function) {
-        this->__lexical_function[function_name] = function;
+        this->_lexical_function[function_name] = function;
     }
 
 private:
-    std::vector<Token> __token_list;
-    int __line = 1;
-    int __error_line = -1;
-    int __no_error_line = -1;
-    bool __skip = false;
+    std::vector<Token> _token_list;
+    int _line = 1;
+    int _error_line = -1;
+    int _no_error_line = -1;
+    bool _skip = false;
     std::unordered_map<int, std::vector<int>> _move_table_attribute = {
         {0, {0,0,0,0,0,0,0,0,0,0,0,0,0}},
         {14, {0}},
-        {10, {0}},
-        {7, {0}},
-        {5, {0,0}},
+        {11, {0,0}},
+        {9, {0}},
+        {3, {0}},
         {1, {0}}
     };
     std::unordered_map<int, std::vector<std::set<char>>> _move_table_character_set = {
-        {0, {{'\x5f'},{'\x2a'},{},{'\x2f'},{'\x2b'},{'\x5e'},{'\x20','\x09'},{'\x2c'},{'\x29'},{'\x0a'},{'\x28'},{'\x3d'},{'\x2d'}}},
+        {0, {{'\x5f'},{'\x2d'},{},{'\x0a'},{'\x2a'},{'\x20','\x09'},{'\x5e'},{'\x29'},{'\x2b'},{'\x3d'},{'\x2f'},{'\x2c'},{'\x28'}}},
         {14, {{}}},
-        {10, {{'\x0d'}}},
-        {7, {{'\x20','\x09'}}},
-        {5, {{},{'\x2e'}}},
+        {11, {{'\x2e'},{}}},
+        {9, {{'\x20','\x09'}}},
+        {3, {{'\x0d'}}},
         {1, {{'\x5f'}}}
     };
     std::unordered_map<int, std::vector<std::vector<std::vector<int>>>> _move_table_range_list = {
         {0, {{{'\x41', '\x5a'},{'\x61', '\x7a'}},{},{{'\x30', '\x39'}},{},{},{},{},{},{},{},{},{},{}}},
         {14, {{{'\x30', '\x39'}}}},
-        {10, {{}}},
-        {7, {{}}},
-        {5, {{{'\x30', '\x39'}},{}}},
+        {11, {{},{{'\x30', '\x39'}}}},
+        {9, {{}}},
+        {3, {{}}},
         {1, {{{'\x30', '\x39'},{'\x41', '\x5a'},{'\x61', '\x7a'}}}}
     };
     std::unordered_map<int, std::vector<int>> _move_table_next_state = {
-        {0, {1,2,5,3,4,6,7,8,9,10,11,12,13}},
+        {0, {1,2,11,3,4,9,5,6,7,8,10,12,13}},
         {14, {14}},
-        {10, {15}},
-        {7, {7}},
-        {5, {5,14}},
+        {11, {14,11}},
+        {9, {9}},
+        {3, {15}},
         {1, {1}}
     };
-    std::set<char> __character_set = {'\x6c','\x43','\x6f','\x55','\x74','\x69','\x4a','\x2a','\x66','\x68','\x78','\x4c','\x75','\x31','\x49','\x64','\x2f','\x79','\x67','\x45','\x52','\x33','\x56','\x53','\x2b','\x30','\x61','\x7a','\x32','\x37','\x4b','\x38','\x5e','\x20','\x2c','\x71','\x47','\x0d','\x57','\x59','\x58','\x6a','\x5f','\x72','\x44','\x2e','\x09','\x6e','\x77','\x65','\x73','\x50','\x36','\x42','\x29','\x6b','\x39','\x54','\x0a','\x6d','\x63','\x62','\x70','\x28','\x35','\x4e','\x76','\x46','\x4f','\x34','\x48','\x41','\x5a','\x3d','\x2d','\x51','\x4d'};
-    int __start_state = 0;
-    std::set<int> __end_state_set = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
-    std::unordered_map<int, std::string> __lexical_symbol_mapping = {
+    std::set<char> _character_set = {'\x6f','\x2d','\x72','\x0d','\x76','\x64','\x56','\x4f','\x6d','\x2e','\x54','\x50','\x42','\x69','\x5f','\x78','\x43','\x4c','\x6c','\x33','\x0a','\x71','\x2a','\x55','\x37','\x4a','\x6a','\x67','\x44','\x20','\x53','\x62','\x41','\x49','\x73','\x6e','\x36','\x58','\x52','\x79','\x29','\x5e','\x35','\x2b','\x38','\x59','\x47','\x75','\x70','\x65','\x46','\x63','\x30','\x61','\x4b','\x3d','\x68','\x39','\x09','\x48','\x34','\x4d','\x2f','\x57','\x6b','\x5a','\x31','\x74','\x2c','\x7a','\x28','\x32','\x51','\x66','\x4e','\x45','\x77'};
+    int _start_state = 0;
+    std::set<int> _end_state_set = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+    std::unordered_map<int, std::string> _lexical_symbol_mapping = {
         {1, "t_symbol"},
-        {2, "!symbol_7"},
-        {3, "!symbol_8"},
-        {4, "!symbol_5"},
-        {5, "t_number"},
-        {6, "!symbol_9"},
-        {7, "skip"},
-        {8, "!symbol_4"},
-        {9, "!symbol_3"},
-        {10, "newline"},
-        {11, "!symbol_2"},
-        {12, "!symbol_1"},
-        {13, "!symbol_6"},
+        {2, "!symbol_6"},
+        {3, "newline"},
+        {4, "!symbol_7"},
+        {5, "!symbol_9"},
+        {6, "!symbol_3"},
+        {7, "!symbol_5"},
+        {8, "!symbol_1"},
+        {9, "skip"},
+        {10, "!symbol_8"},
+        {11, "t_number"},
+        {12, "!symbol_4"},
+        {13, "!symbol_2"},
         {14, "t_number"},
         {15, "newline"}
     };
-    std::set<int> __non_greedy_state_set = {};
-    std::unordered_map<std::string, std::vector<std::string>> __symbol_function_mapping = {
+    std::set<int> _non_greedy_state_set = {};
+    std::unordered_map<std::string, std::vector<std::string>> _symbol_function_mapping = {
         {"skip", {"skip"}},
         {"newline", {"skip","newline"}}
     };
-    std::unordered_map<std::string, lexical_function> __lexical_function;
+    std::unordered_map<std::string, lexical_function> _lexical_function;
 
     std::string &_invoke_lexical_function(std::string &symbol, std::string &token_string) {
-        this->__skip = false;
-        if (this->__symbol_function_mapping.count(symbol)) {
-            for (const auto& function : this->__symbol_function_mapping[symbol]) {
-                if (this->__lexical_function.count(function)) {
-                    token_string = this->__lexical_function[function](token_string);
+        this->_skip = false;
+        if (this->_symbol_function_mapping.count(symbol)) {
+            for (const auto& function : this->_symbol_function_mapping[symbol]) {
+                if (this->_lexical_function.count(function)) {
+                    token_string = this->_lexical_function[function](token_string);
                 } else if (function == "skip") {
                     this->skip();
                 } else if (function == "newline") {
@@ -255,14 +255,14 @@ private:
 
     void _generate_token(int state, std::string &token_string) {
         std::string symbol;
-        if (this->__lexical_symbol_mapping.count(state)) {
-            symbol = this->__lexical_symbol_mapping[state];
+        if (this->_lexical_symbol_mapping.count(state)) {
+            symbol = this->_lexical_symbol_mapping[state];
         } else {
             symbol = "!symbol";
         }
         token_string = this->_invoke_lexical_function(symbol, token_string);
-        if (!this->__skip) {
-            this->__token_list.emplace_back(token_string, this->__line, symbol);
+        if (!this->_skip) {
+            this->_token_list.emplace_back(token_string, this->_line, symbol);
         }
     }
 };
@@ -335,9 +335,14 @@ public:
         this->_error_index = error_index;
     }
 
+    int no_error_index() {
+        return this->_no_error_index;
+    }
+
 private:
     BosonGrammarNode _grammar_tree;
     int _error_index = -1;
+    int _no_error_index = -1;
 };
 
 
@@ -481,77 +486,77 @@ public:
 
 private:
     std::unordered_map<std::string, int>_terminal_index = {
-        {"!symbol_1", 0},
-        {"t_number", 1},
-        {"!symbol_3", 2},
-        {"!symbol_5", 3},
-        {"$", 4},
-        {"!symbol_9", 5},
-        {"!symbol_2", 6},
-        {"!symbol_4", 7},
-        {"!symbol_7", 8},
+        {"$", 0},
+        {"!symbol_7", 1},
+        {"!symbol_2", 2},
+        {"t_number", 3},
+        {"!symbol_5", 4},
+        {"!symbol_4", 5},
+        {"!symbol_9", 6},
+        {"!symbol_1", 7},
+        {"t_symbol", 8},
         {"!symbol_6", 9},
-        {"t_symbol", 10},
+        {"!symbol_3", 10},
         {"!symbol_8", 11}
     };
     
     std::unordered_map<int, std::unordered_map<int, std::string>> _action_table = {
-        {0, {{4, "r2"}, {10, "r2"}}}, 
-        {1, {{4, "a"}}}, 
-        {2, {{4, "r13"}, {10, "s5"}}}, 
-        {3, {{4, "r25"}, {10, "r25"}}}, 
-        {4, {{4, "r1"}, {10, "r1"}}}, 
-        {5, {{0, "s6"}, {6, "s7"}}}, 
-        {6, {{1, "s9"}, {6, "s14"}, {10, "s13"}}}, 
-        {7, {{1, "s9"}, {6, "s14"}, {10, "s13"}}}, 
-        {8, {{2, "r15"}, {3, "r15"}, {4, "r15"}, {7, "r15"}, {8, "s21"}, {9, "r15"}, {10, "r15"}, {11, "s19"}}}, 
-        {9, {{2, "r18"}, {3, "r18"}, {4, "r18"}, {5, "r18"}, {7, "r18"}, {8, "r18"}, {9, "r18"}, {10, "r18"}, {11, "r18"}}}, 
-        {10, {{3, "s24"}, {4, "r26"}, {9, "s25"}, {10, "r26"}}}, 
-        {11, {{2, "r21"}, {3, "r21"}, {4, "r21"}, {5, "s26"}, {7, "r21"}, {8, "r21"}, {9, "r21"}, {10, "r21"}, {11, "r21"}}}, 
-        {12, {{2, "r17"}, {3, "r17"}, {4, "r17"}, {5, "r17"}, {7, "r17"}, {8, "r17"}, {9, "r17"}, {10, "r17"}, {11, "r17"}}}, 
-        {13, {{2, "r19"}, {3, "r19"}, {4, "r19"}, {5, "r19"}, {6, "s7"}, {7, "r19"}, {8, "r19"}, {9, "r19"}, {10, "r19"}, {11, "r19"}}}, 
-        {14, {{1, "s9"}, {6, "s14"}, {10, "s13"}}}, 
-        {15, {{2, "r22"}, {3, "r22"}, {4, "r22"}, {5, "r22"}, {7, "r22"}, {8, "r22"}, {9, "r22"}, {10, "r22"}, {11, "r22"}}}, 
-        {16, {{2, "r5"}, {3, "s24"}, {7, "r5"}, {9, "s25"}}}, 
-        {17, {{2, "s29"}}}, 
-        {18, {{1, "r11"}, {6, "r11"}, {10, "r11"}}}, 
-        {19, {{1, "r10"}, {6, "r10"}, {10, "r10"}}}, 
-        {20, {{1, "s9"}, {6, "s14"}, {10, "s13"}}}, 
-        {21, {{1, "r9"}, {6, "r9"}, {10, "r9"}}}, 
-        {22, {{1, "r8"}, {6, "r8"}, {10, "r8"}}}, 
-        {23, {{1, "s9"}, {6, "s14"}, {10, "s13"}}}, 
-        {24, {{1, "r6"}, {6, "r6"}, {10, "r6"}}}, 
-        {25, {{1, "r7"}, {6, "r7"}, {10, "r7"}}}, 
-        {26, {{1, "s9"}, {6, "s14"}, {10, "s13"}}}, 
-        {27, {{2, "s33"}, {3, "s24"}, {9, "s25"}}}, 
-        {28, {{2, "r12"}, {7, "s35"}}}, 
-        {29, {{2, "r24"}, {3, "r24"}, {4, "r24"}, {5, "r24"}, {7, "r24"}, {8, "r24"}, {9, "r24"}, {10, "r24"}, {11, "r24"}}}, 
-        {30, {{2, "r20"}, {3, "r20"}, {4, "r20"}, {5, "s26"}, {7, "r20"}, {8, "r20"}, {9, "r20"}, {10, "r20"}, {11, "r20"}}}, 
-        {31, {{2, "r14"}, {3, "r14"}, {4, "r14"}, {7, "r14"}, {8, "s21"}, {9, "r14"}, {10, "r14"}, {11, "s19"}}}, 
-        {32, {{2, "r23"}, {3, "r23"}, {4, "r23"}, {5, "r23"}, {7, "r23"}, {8, "r23"}, {9, "r23"}, {10, "r23"}, {11, "r23"}}}, 
-        {33, {{2, "r16"}, {3, "r16"}, {4, "r16"}, {5, "r16"}, {7, "r16"}, {8, "r16"}, {9, "r16"}, {10, "r16"}, {11, "r16"}}}, 
-        {34, {{2, "r4"}, {7, "r4"}}}, 
-        {35, {{1, "s9"}, {6, "s14"}, {10, "s13"}}}, 
-        {36, {{2, "r3"}, {3, "s24"}, {7, "r3"}, {9, "s25"}}}
+        {0, {{0, "r2"}, {8, "r2"}}}, 
+        {1, {{0, "r13"}, {8, "s4"}}}, 
+        {2, {{0, "a"}}}, 
+        {3, {{0, "r1"}, {8, "r1"}}}, 
+        {4, {{2, "s7"}, {7, "s6"}}}, 
+        {5, {{0, "r25"}, {8, "r25"}}}, 
+        {6, {{2, "s9"}, {3, "s15"}, {8, "s13"}}}, 
+        {7, {{2, "s9"}, {3, "s15"}, {8, "s13"}}}, 
+        {8, {{0, "r21"}, {1, "r21"}, {4, "r21"}, {5, "r21"}, {6, "s18"}, {8, "r21"}, {9, "r21"}, {10, "r21"}, {11, "r21"}}}, 
+        {9, {{2, "s9"}, {3, "s15"}, {8, "s13"}}}, 
+        {10, {{0, "r26"}, {4, "s20"}, {8, "r26"}, {9, "s21"}}}, 
+        {11, {{0, "r15"}, {1, "s26"}, {4, "r15"}, {5, "r15"}, {8, "r15"}, {9, "r15"}, {10, "r15"}, {11, "s24"}}}, 
+        {12, {{0, "r22"}, {1, "r22"}, {4, "r22"}, {5, "r22"}, {6, "r22"}, {8, "r22"}, {9, "r22"}, {10, "r22"}, {11, "r22"}}}, 
+        {13, {{0, "r19"}, {1, "r19"}, {2, "s7"}, {4, "r19"}, {5, "r19"}, {6, "r19"}, {8, "r19"}, {9, "r19"}, {10, "r19"}, {11, "r19"}}}, 
+        {14, {{0, "r17"}, {1, "r17"}, {4, "r17"}, {5, "r17"}, {6, "r17"}, {8, "r17"}, {9, "r17"}, {10, "r17"}, {11, "r17"}}}, 
+        {15, {{0, "r18"}, {1, "r18"}, {4, "r18"}, {5, "r18"}, {6, "r18"}, {8, "r18"}, {9, "r18"}, {10, "r18"}, {11, "r18"}}}, 
+        {16, {{4, "s20"}, {5, "r5"}, {9, "s21"}, {10, "r5"}}}, 
+        {17, {{10, "s29"}}}, 
+        {18, {{2, "s9"}, {3, "s15"}, {8, "s13"}}}, 
+        {19, {{4, "s20"}, {9, "s21"}, {10, "s31"}}}, 
+        {20, {{2, "r6"}, {3, "r6"}, {8, "r6"}}}, 
+        {21, {{2, "r7"}, {3, "r7"}, {8, "r7"}}}, 
+        {22, {{2, "s9"}, {3, "s15"}, {8, "s13"}}}, 
+        {23, {{2, "r8"}, {3, "r8"}, {8, "r8"}}}, 
+        {24, {{2, "r10"}, {3, "r10"}, {8, "r10"}}}, 
+        {25, {{2, "r11"}, {3, "r11"}, {8, "r11"}}}, 
+        {26, {{2, "r9"}, {3, "r9"}, {8, "r9"}}}, 
+        {27, {{2, "s9"}, {3, "s15"}, {8, "s13"}}}, 
+        {28, {{5, "s35"}, {10, "r12"}}}, 
+        {29, {{0, "r24"}, {1, "r24"}, {4, "r24"}, {5, "r24"}, {6, "r24"}, {8, "r24"}, {9, "r24"}, {10, "r24"}, {11, "r24"}}}, 
+        {30, {{0, "r23"}, {1, "r23"}, {4, "r23"}, {5, "r23"}, {6, "r23"}, {8, "r23"}, {9, "r23"}, {10, "r23"}, {11, "r23"}}}, 
+        {31, {{0, "r16"}, {1, "r16"}, {4, "r16"}, {5, "r16"}, {6, "r16"}, {8, "r16"}, {9, "r16"}, {10, "r16"}, {11, "r16"}}}, 
+        {32, {{0, "r14"}, {1, "s26"}, {4, "r14"}, {5, "r14"}, {8, "r14"}, {9, "r14"}, {10, "r14"}, {11, "s24"}}}, 
+        {33, {{0, "r20"}, {1, "r20"}, {4, "r20"}, {5, "r20"}, {6, "s18"}, {8, "r20"}, {9, "r20"}, {10, "r20"}, {11, "r20"}}}, 
+        {34, {{5, "r4"}, {10, "r4"}}}, 
+        {35, {{2, "s9"}, {3, "s15"}, {8, "s13"}}}, 
+        {36, {{4, "s20"}, {5, "r3"}, {9, "s21"}, {10, "r3"}}}
     };
 
     std::unordered_map<int, std::unordered_map<int, int>> _goto_table = {
-        {0, {{6, 1}, {13, 2}}}, 
-        {2, {{3, 4}, {9, 3}}}, 
-        {6, {{7, 10}, {8, 11}, {9, 12}, {12, 15}, {15, 8}}}, 
-        {7, {{7, 16}, {8, 11}, {9, 12}, {11, 17}, {12, 15}, {15, 8}}}, 
-        {8, {{1, 18}, {4, 20}}}, 
-        {10, {{2, 23}, {14, 22}}}, 
-        {14, {{7, 27}, {8, 11}, {9, 12}, {12, 15}, {15, 8}}}, 
-        {16, {{2, 23}, {10, 28}, {14, 22}}}, 
-        {20, {{8, 30}, {9, 12}, {12, 15}}}, 
-        {23, {{8, 11}, {9, 12}, {12, 15}, {15, 31}}}, 
-        {26, {{9, 12}, {12, 32}}}, 
-        {27, {{2, 23}, {14, 22}}}, 
-        {28, {{0, 34}}}, 
-        {31, {{1, 18}, {4, 20}}}, 
-        {35, {{7, 36}, {8, 11}, {9, 12}, {12, 15}, {15, 8}}}, 
-        {36, {{2, 23}, {14, 22}}}
+        {0, {{14, 1}, {15, 2}}}, 
+        {1, {{8, 3}, {13, 5}}}, 
+        {6, {{3, 11}, {4, 8}, {10, 10}, {11, 12}, {13, 14}}}, 
+        {7, {{0, 17}, {3, 11}, {4, 8}, {10, 16}, {11, 12}, {13, 14}}}, 
+        {9, {{3, 11}, {4, 8}, {10, 19}, {11, 12}, {13, 14}}}, 
+        {10, {{2, 23}, {5, 22}}}, 
+        {11, {{6, 25}, {12, 27}}}, 
+        {16, {{1, 28}, {2, 23}, {5, 22}}}, 
+        {18, {{11, 30}, {13, 14}}}, 
+        {19, {{2, 23}, {5, 22}}}, 
+        {22, {{3, 32}, {4, 8}, {11, 12}, {13, 14}}}, 
+        {27, {{4, 33}, {11, 12}, {13, 14}}}, 
+        {28, {{9, 34}}}, 
+        {32, {{6, 25}, {12, 27}}}, 
+        {35, {{3, 11}, {4, 8}, {10, 36}, {11, 12}, {13, 14}}}, 
+        {36, {{2, 23}, {5, 22}}}
     };
     
     std::unordered_map<int, std::string> _node_table = {
@@ -572,7 +577,7 @@ private:
 
     std::vector<int> _reduce_symbol_sum = {2, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 2, 1, 3, 1, 3, 1, 1, 1, 3, 1, 1, 3, 4, 1, 3};
 
-    std::vector<int> _reduce_to_non_terminal_index = {13, 13, 0, 10, 10, 14, 14, 2, 1, 1, 4, 11, 6, 7, 7, 12, 12, 12, 12, 15, 15, 8, 8, 9, 3, 3};
+    std::vector<int> _reduce_to_non_terminal_index = {14, 14, 9, 1, 1, 2, 2, 5, 6, 6, 12, 0, 15, 10, 10, 11, 11, 11, 11, 3, 3, 4, 4, 13, 8, 8};
 
     std::set<int> _none_grammar_tuple_reduce = {2, 5, 6, 7, 8, 9, 10, 12, 14, 16, 20, 21, 24};
 

@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
         return -1;
     }
     BosonGrammar grammar_tree = grammar.grammar_analysis(tokenizer.token_list());
-    if (grammar_tree.get_error_index() != -1) {
+    if (grammar_tree.get_error_index() != grammar_tree.no_error_index()) {
         int line = tokenizer.token_list()[grammar_tree.get_error_index()].line;
         std::cerr << "[ERROR] Grammar error, line: " << line << std::endl;
         for (auto &t: tokenizer.token_list()) {
