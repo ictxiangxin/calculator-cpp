@@ -1,0 +1,12 @@
+c = 299792458
+m0 = 70
+v = 0.1 * c
+
+m = m0 / (1 - (v / c) ^ 2)
+
+print(m)
+
+print(sin(m * pow(2, m0)))
+
+b = tan(m) / m
+print(b)

@@ -1,0 +1,40 @@
+%sparse_table yes;
+%lexical_token_class_name Token;
+%lexical_analyzer_class_name Tokenizer;
+%grammar_analyzer_class_name GrammarAnalyzer;
+%semantics_analyzer_class_name SemanticsAnalyzer;
+%start_symbol calculator;
+
+t_symbol = <[_a-zA-Z][_a-zA-Z0-9]*>;
+t_number = <[0-9]+(\.[0-9]*)?>;
+skip     = <[\ \t]+>@{skip};
+newline  = <\n\r|\n>@{skip, newline};
+
+
+calculator: statement*;
+
+statement: t_symbol '=' expression = set_variable($0, $2)
+         | function
+         ;
+
+function: t_symbol '(' arguments ')' = function($0, $2);
+
+arguments: expression (',' expression)* = ($0, *$1($1));
+
+expression: expression ('+' | '-') expression_high = compute($0, *$1, $2)
+          | expression_high
+          ;
+
+expression_high: expression_high ('*' | '/') expression_top = compute($0, *$1, $2)
+               | expression_top
+               ;
+
+expression_top: expression_top '^' expression_final = compute($0, $1, $2)
+              | expression_final
+              ;
+
+expression_final: '(' expression ')' = expression($1)
+                | function
+                | t_symbol = get_variable($0)
+                | t_number = number($0)
+                ;

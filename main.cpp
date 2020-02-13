@@ -3,7 +3,7 @@
 #include <sstream>
 #include <list>
 #include <mpfr.h>
-#include "tokenize.h"
+#include "parser.hpp"
 
 
 void usage() {
@@ -37,19 +37,19 @@ int main(int argc, char** argv) {
     }
     mpfr_set_default_prec(128);
     std::unordered_map<std::string, std::string> variables;
-    CalculatorTokenize tokenize;
-    BosonGrammarAnalyzer grammar;
-    BosonSemanticsAnalyzer<mpfr_t> semantics;
-    tokenize.tokenize(code);
-    if (tokenize.get_error_line() != -1) {
-        std::cerr << "[ERROR] Lexical error, line: " << tokenize.get_error_line() << std::endl;
+    Tokenizer tokenizer;
+    GrammarAnalyzer grammar;
+    SemanticsAnalyzer<mpfr_t> semantics;
+    tokenizer.tokenize(code);
+    if (tokenizer.tokenize(code) != tokenizer.no_error_line()) {
+        std::cerr << "[ERROR] Lexical error, line: " << tokenizer.error_line() << std::endl;
         return -1;
     }
-    BosonGrammar grammar_tree = grammar.grammar_analysis(tokenize.get_token_list());
+    BosonGrammar grammar_tree = grammar.grammar_analysis(tokenizer.token_list());
     if (grammar_tree.get_error_index() != -1) {
-        int line = tokenize.get_token_list()[grammar_tree.get_error_index()].line;
-        std::cerr << "[ERROR] Grammar error:" << std::endl;
-        for (auto &t: tokenize.get_token_list()) {
+        int line = tokenizer.token_list()[grammar_tree.get_error_index()].line;
+        std::cerr << "[ERROR] Grammar error, line: " << line << std::endl;
+        for (auto &t: tokenizer.token_list()) {
             if (line == t.line) {
                 std::cerr << t.text << ' ';
             }
