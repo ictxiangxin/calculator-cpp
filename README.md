@@ -62,27 +62,27 @@ Boson v1.3 - Grammar analyzer generator
     URL:    https://github.com/ictxiangxin/boson
 
 [Generate Analyzer Code]
-    [1] Parse Boson Script... Done [0.0050s]
+    [1] Parse Boson Script... Done [0.0040s]
         > Commands Count: 6
         > Lexical Definition: Yes
         > Grammar Definition: Yes
-    [2] Generate Lexical Analysis Table... Done [0.9455s]
+    [2] Generate Lexical Analysis Table... Done [0.0800s]
         > Lexical Definition Count: 13
         > Character Set Size: 77
         > DFA State Count: 6
-    [3] Generate Grammar Analysis Table... Done [0.0020s]
-        > Algorithm: SLR
+    [3] Generate Grammar Analysis Table... Done [0.0060s]
+        > Algorithm: LALR
         > Grammar Sentence Count: 26
         > Non-Terminal Symbol Count: 16
         > Terminal Symbol Count: 12
         > PDA State Count: 37
-        > Action Table Size/Sparse-Size (Rate): 481/168 (0.35%)
-        > Goto Table Size/Sparse-Size (Rate): 592/48 (0.08%)
-    [4] Generate Code... Done [0.2009s]
+        > Action Table Size/Sparse-Size (Rate): 481/168 (34.93%)
+        > Goto Table Size/Sparse-Size (Rate): 592/48 (8.11%)
+    [4] Generate Code... Done [0.0830s]
         > Language: C++
         > Generate Lexer: Yes
         > Generate Parser: Yes
-[Complete!!! 1.1703s]
+[Complete!!! 0.1819s]
 ```
 
 * * *
