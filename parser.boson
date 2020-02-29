@@ -1,8 +1,8 @@
-%sparse_table yes;
-%lexical_token_class_name Token;
-%lexical_analyzer_class_name Tokenizer;
-%grammar_analyzer_class_name GrammarAnalyzer;
-%semantics_analyzer_class_name SemanticsAnalyzer;
+%parser_sparse_table yes;
+%token_class_name Token;
+%lexer_class_name Tokenizer;
+%parser_class_name Parser;
+%interpreter_class_name Interpreter;
 %start_symbol calculator;
 
 t_symbol = <[_a-zA-Z][_a-zA-Z0-9]*>;

@@ -141,7 +141,7 @@ public:
         return this->_error_line;
     }
 
-    void lexical_function_entity(std::string &function_name, lexical_function &function) {
+    void register_function(std::string &function_name, lexical_function &function) {
         this->_lexical_function[function_name] = function;
     }
 
@@ -183,7 +183,7 @@ private:
         {2, {2,14}},
         {1, {1}}
     };
-    std::set<char> _character_set = {'\x50','\x65','\x45','\x70','\x61','\x42','\x46','\x5f','\x28','\x2a','\x2b','\x52','\x6b','\x73','\x38','\x3d','\x59','\x6c','\x72','\x4c','\x66','\x75','\x35','\x4b','\x76','\x31','\x6a','\x2f','\x6e','\x4d','\x41','\x2e','\x36','\x49','\x7a','\x79','\x34','\x30','\x33','\x53','\x71','\x4a','\x63','\x56','\x78','\x6f','\x47','\x43','\x6d','\x74','\x57','\x09','\x67','\x44','\x4f','\x37','\x68','\x2c','\x2d','\x5a','\x4e','\x0d','\x51','\x29','\x39','\x20','\x32','\x69','\x55','\x64','\x0a','\x5e','\x48','\x62','\x58','\x54','\x77'};
+    std::set<char> _character_set = {'\x2d','\x78','\x58','\x09','\x28','\x42','\x30','\x47','\x57','\x33','\x37','\x41','\x48','\x6f','\x74','\x31','\x5e','\x52','\x56','\x51','\x73','\x45','\x0a','\x76','\x4e','\x71','\x2e','\x5f','\x4d','\x39','\x6b','\x43','\x2c','\x4f','\x35','\x75','\x6a','\x50','\x59','\x2f','\x72','\x6c','\x32','\x29','\x61','\x20','\x34','\x68','\x46','\x0d','\x65','\x69','\x67','\x4b','\x2a','\x54','\x62','\x64','\x63','\x53','\x49','\x6d','\x2b','\x4c','\x3d','\x55','\x79','\x5a','\x4a','\x70','\x7a','\x66','\x44','\x38','\x6e','\x36','\x77'};
     int _start_state = 0;
     std::set<int> _end_state_set = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
     std::unordered_map<int, std::string> _lexical_symbol_mapping = {
@@ -381,11 +381,11 @@ protected:
 };
 
 
-class GrammarAnalyzer {
+class Parser {
 public:
-    GrammarAnalyzer() = default;
+    Parser() = default;
 
-    BosonGrammar grammar_analysis(std::vector<Token> token_list) {
+    BosonGrammar parse(std::vector<Token> token_list) {
         BosonGrammar grammar;
         std::stack<int> analysis_stack;
         std::stack<BosonGrammarNode> symbol_stack;
@@ -474,156 +474,139 @@ public:
 
 private:
     std::unordered_map<std::string, int>_terminal_index_mapping = {
-        {"!symbol_7", 0},
-        {"!symbol_2", 1},
-        {"!symbol_6", 2},
-        {"!symbol_1", 3},
-        {"!symbol_4", 4},
-        {"!symbol_3", 5},
-        {"$", 6},
-        {"!symbol_5", 7},
-        {"t_number", 8},
-        {"!symbol_8", 9},
-        {"t_symbol", 10},
-        {"!symbol_9", 11}
+        {"!symbol_2", 0},
+        {"!symbol_1", 1},
+        {"t_symbol", 2},
+        {"t_number", 3},
+        {"!symbol_3", 4},
+        {"!symbol_9", 5},
+        {"!symbol_8", 6},
+        {"!symbol_4", 7},
+        {"!symbol_5", 8},
+        {"$", 9},
+        {"!symbol_7", 10},
+        {"!symbol_6", 11}
     };
     
     std::unordered_map<int, std::unordered_map<int, std::string>> _sparse_action_table = {
-        {0, {{6, "r19"}, {10, "r19"}}}, 
-        {1, {{6, "a"}}}, 
-        {2, {{6, "r1"}, {10, "s4"}}}, 
-        {3, {{6, "r10"}, {10, "r10"}}}, 
-        {4, {{1, "s6"}, {3, "s7"}}}, 
-        {5, {{6, "r11"}, {10, "r11"}}}, 
-        {6, {{1, "s13"}, {8, "s15"}, {10, "s10"}}}, 
-        {7, {{1, "s13"}, {8, "s15"}, {10, "s10"}}}, 
-        {8, {{2, "s28"}, {6, "r7"}, {7, "s27"}, {10, "r7"}}}, 
-        {9, {{0, "s21"}, {2, "r8"}, {4, "r8"}, {5, "r8"}, {6, "r8"}, {7, "r8"}, {9, "s22"}, {10, "r8"}}}, 
-        {10, {{0, "r2"}, {1, "s6"}, {2, "r2"}, {4, "r2"}, {5, "r2"}, {6, "r2"}, {7, "r2"}, {9, "r2"}, {10, "r2"}, {11, "r2"}}}, 
-        {11, {{0, "r26"}, {2, "r26"}, {4, "r26"}, {5, "r26"}, {6, "r26"}, {7, "r26"}, {9, "r26"}, {10, "r26"}, {11, "s17"}}}, 
-        {12, {{0, "r14"}, {2, "r14"}, {4, "r14"}, {5, "r14"}, {6, "r14"}, {7, "r14"}, {9, "r14"}, {10, "r14"}, {11, "r14"}}}, 
-        {13, {{1, "s13"}, {8, "s15"}, {10, "s10"}}}, 
-        {14, {{0, "r15"}, {2, "r15"}, {4, "r15"}, {5, "r15"}, {6, "r15"}, {7, "r15"}, {9, "r15"}, {10, "r15"}, {11, "r15"}}}, 
-        {15, {{0, "r25"}, {2, "r25"}, {4, "r25"}, {5, "r25"}, {6, "r25"}, {7, "r25"}, {9, "r25"}, {10, "r25"}, {11, "r25"}}}, 
-        {16, {{2, "s28"}, {5, "s25"}, {7, "s27"}}}, 
-        {17, {{1, "s13"}, {8, "s15"}, {10, "s10"}}}, 
-        {18, {{0, "r21"}, {2, "r21"}, {4, "r21"}, {5, "r21"}, {6, "r21"}, {7, "r21"}, {9, "r21"}, {10, "r21"}, {11, "r21"}}}, 
-        {19, {{1, "s13"}, {8, "s15"}, {10, "s10"}}}, 
-        {20, {{1, "r24"}, {8, "r24"}, {10, "r24"}}}, 
-        {21, {{1, "r12"}, {8, "r12"}, {10, "r12"}}}, 
-        {22, {{1, "r17"}, {8, "r17"}, {10, "r17"}}}, 
-        {23, {{0, "r5"}, {2, "r5"}, {4, "r5"}, {5, "r5"}, {6, "r5"}, {7, "r5"}, {9, "r5"}, {10, "r5"}, {11, "s17"}}}, 
-        {24, {{1, "s13"}, {8, "s15"}, {10, "s10"}}}, 
-        {25, {{0, "r9"}, {2, "r9"}, {4, "r9"}, {5, "r9"}, {6, "r9"}, {7, "r9"}, {9, "r9"}, {10, "r9"}, {11, "r9"}}}, 
-        {26, {{1, "r23"}, {8, "r23"}, {10, "r23"}}}, 
-        {27, {{1, "r13"}, {8, "r13"}, {10, "r13"}}}, 
-        {28, {{1, "r20"}, {8, "r20"}, {10, "r20"}}}, 
-        {29, {{0, "s21"}, {2, "r22"}, {4, "r22"}, {5, "r22"}, {6, "r22"}, {7, "r22"}, {9, "s22"}, {10, "r22"}}}, 
-        {30, {{5, "s32"}}}, 
-        {31, {{2, "s28"}, {4, "r6"}, {5, "r6"}, {7, "s27"}}}, 
-        {32, {{0, "r18"}, {2, "r18"}, {4, "r18"}, {5, "r18"}, {6, "r18"}, {7, "r18"}, {9, "r18"}, {10, "r18"}, {11, "r18"}}}, 
-        {33, {{4, "s35"}, {5, "r3"}}}, 
-        {34, {{4, "r16"}, {5, "r16"}}}, 
-        {35, {{1, "s13"}, {8, "s15"}, {10, "s10"}}}, 
-        {36, {{2, "s28"}, {4, "r4"}, {5, "r4"}, {7, "s27"}}}
+        {0, {{2, "r6"}, {9, "r6"}}}, 
+        {1, {{9, "a"}}}, 
+        {2, {{2, "s4"}, {9, "r7"}}}, 
+        {3, {{2, "r15"}, {9, "r15"}}}, 
+        {4, {{0, "s7"}, {1, "s6"}}}, 
+        {5, {{2, "r17"}, {9, "r17"}}}, 
+        {6, {{0, "s11"}, {2, "s14"}, {3, "s13"}}}, 
+        {7, {{0, "s11"}, {2, "s14"}, {3, "s13"}}}, 
+        {8, {{2, "r20"}, {4, "r20"}, {6, "s28"}, {7, "r20"}, {8, "r20"}, {9, "r20"}, {10, "s27"}, {11, "r20"}}}, 
+        {9, {{2, "r10"}, {4, "r10"}, {5, "s30"}, {6, "r10"}, {7, "r10"}, {8, "r10"}, {9, "r10"}, {10, "r10"}, {11, "r10"}}}, 
+        {10, {{2, "r12"}, {4, "r12"}, {5, "r12"}, {6, "r12"}, {7, "r12"}, {8, "r12"}, {9, "r12"}, {10, "r12"}, {11, "r12"}}}, 
+        {11, {{0, "s11"}, {2, "s14"}, {3, "s13"}}}, 
+        {12, {{2, "r13"}, {4, "r13"}, {5, "r13"}, {6, "r13"}, {7, "r13"}, {8, "r13"}, {9, "r13"}, {10, "r13"}, {11, "r13"}}}, 
+        {13, {{2, "r23"}, {4, "r23"}, {5, "r23"}, {6, "r23"}, {7, "r23"}, {8, "r23"}, {9, "r23"}, {10, "r23"}, {11, "r23"}}}, 
+        {14, {{0, "s7"}, {2, "r26"}, {4, "r26"}, {5, "r26"}, {6, "r26"}, {7, "r26"}, {8, "r26"}, {9, "r26"}, {10, "r26"}, {11, "r26"}}}, 
+        {15, {{4, "s33"}}}, 
+        {16, {{4, "r5"}, {7, "r5"}, {8, "s20"}, {11, "s21"}}}, 
+        {17, {{0, "s11"}, {2, "s14"}, {3, "s13"}}}, 
+        {18, {{4, "r24"}, {7, "s22"}}}, 
+        {19, {{0, "r22"}, {2, "r22"}, {3, "r22"}}}, 
+        {20, {{0, "r16"}, {2, "r16"}, {3, "r16"}}}, 
+        {21, {{0, "r19"}, {2, "r19"}, {3, "r19"}}}, 
+        {22, {{0, "s11"}, {2, "s14"}, {3, "s13"}}}, 
+        {23, {{4, "r9"}, {7, "r9"}}}, 
+        {24, {{4, "r18"}, {7, "r18"}, {8, "s20"}, {11, "s21"}}}, 
+        {25, {{0, "s11"}, {2, "s14"}, {3, "s13"}}}, 
+        {26, {{0, "r8"}, {2, "r8"}, {3, "r8"}}}, 
+        {27, {{0, "r1"}, {2, "r1"}, {3, "r1"}}}, 
+        {28, {{0, "r14"}, {2, "r14"}, {3, "r14"}}}, 
+        {29, {{2, "r2"}, {4, "r2"}, {5, "s30"}, {6, "r2"}, {7, "r2"}, {8, "r2"}, {9, "r2"}, {10, "r2"}, {11, "r2"}}}, 
+        {30, {{0, "s11"}, {2, "s14"}, {3, "s13"}}}, 
+        {31, {{2, "r4"}, {4, "r4"}, {5, "r4"}, {6, "r4"}, {7, "r4"}, {8, "r4"}, {9, "r4"}, {10, "r4"}, {11, "r4"}}}, 
+        {32, {{2, "r3"}, {4, "r3"}, {6, "s28"}, {7, "r3"}, {8, "r3"}, {9, "r3"}, {10, "s27"}, {11, "r3"}}}, 
+        {33, {{2, "r25"}, {4, "r25"}, {5, "r25"}, {6, "r25"}, {7, "r25"}, {8, "r25"}, {9, "r25"}, {10, "r25"}, {11, "r25"}}}, 
+        {34, {{4, "s35"}, {8, "s20"}, {11, "s21"}}}, 
+        {35, {{2, "r11"}, {4, "r11"}, {5, "r11"}, {6, "r11"}, {7, "r11"}, {8, "r11"}, {9, "r11"}, {10, "r11"}, {11, "r11"}}}, 
+        {36, {{2, "r21"}, {8, "s20"}, {9, "r21"}, {11, "s21"}}}
     };
 
     std::unordered_map<int, std::unordered_map<int, int>> _sparse_goto_table = {
-        {0, {{5, 2}, {6, 1}}}, 
-        {2, {{10, 5}, {13, 3}}}, 
-        {6, {{1, 9}, {4, 30}, {9, 11}, {10, 14}, {14, 31}, {15, 12}}}, 
-        {7, {{1, 9}, {9, 11}, {10, 14}, {14, 8}, {15, 12}}}, 
-        {8, {{0, 24}, {3, 26}}}, 
-        {9, {{8, 19}, {12, 20}}}, 
-        {13, {{1, 9}, {9, 11}, {10, 14}, {14, 16}, {15, 12}}}, 
-        {16, {{0, 24}, {3, 26}}}, 
-        {17, {{10, 14}, {15, 18}}}, 
-        {19, {{9, 23}, {10, 14}, {15, 12}}}, 
-        {24, {{1, 29}, {9, 11}, {10, 14}, {15, 12}}}, 
-        {29, {{8, 19}, {12, 20}}}, 
-        {31, {{0, 24}, {2, 33}, {3, 26}}}, 
-        {33, {{11, 34}}}, 
-        {35, {{1, 9}, {9, 11}, {10, 14}, {14, 36}, {15, 12}}}, 
-        {36, {{0, 24}, {3, 26}}}
+        {0, {{1, 2}, {9, 1}}}, 
+        {2, {{3, 3}, {13, 5}}}, 
+        {6, {{4, 36}, {7, 9}, {8, 10}, {12, 8}, {13, 12}}}, 
+        {7, {{4, 16}, {7, 9}, {8, 10}, {12, 8}, {13, 12}, {14, 15}}}, 
+        {8, {{0, 26}, {15, 25}}}, 
+        {11, {{4, 34}, {7, 9}, {8, 10}, {12, 8}, {13, 12}}}, 
+        {16, {{2, 19}, {5, 17}, {10, 18}}}, 
+        {17, {{7, 9}, {8, 10}, {12, 32}, {13, 12}}}, 
+        {18, {{11, 23}}}, 
+        {22, {{4, 24}, {7, 9}, {8, 10}, {12, 8}, {13, 12}}}, 
+        {24, {{2, 19}, {5, 17}}}, 
+        {25, {{7, 29}, {8, 10}, {13, 12}}}, 
+        {30, {{8, 31}, {13, 12}}}, 
+        {32, {{0, 26}, {15, 25}}}, 
+        {34, {{2, 19}, {5, 17}}}, 
+        {36, {{2, 19}, {5, 17}}}
     };
     
     std::unordered_map<int, std::vector<std::string>> _sentence_index_grammar_tuple_mapping = {
-        {25, {"0"}},
-        {2, {"0"}},
-        {9, {"1"}},
-        {21, {"0", "1", "2"}},
-        {5, {"0", "*1", "2"}},
-        {22, {"0", "*1", "2"}},
-        {3, {"0", "*1"}},
-        {4, {"1"}},
+        {23, {"0"}},
+        {26, {"0"}},
+        {11, {"1"}},
+        {4, {"0", "1", "2"}},
+        {2, {"0", "*1", "2"}},
+        {3, {"0", "*1", "2"}},
+        {24, {"0", "*1"}},
+        {18, {"1"}},
+        {5, {}},
+        {9, {"*0", "*1"}},
+        {25, {"0", "2"}},
+        {21, {"0", "2"}},
         {6, {}},
-        {16, {"*0", "*1"}},
-        {18, {"0", "2"}},
-        {7, {"0", "2"}},
-        {19, {}},
-        {10, {"*0", "1"}}
+        {15, {"*0", "1"}}
     };
 
-    std::vector<int> _reduce_symbol_count = {1, 1, 1, 2, 2, 3, 0, 3, 1, 3, 2, 1, 1, 1, 1, 1, 2, 1, 4, 0, 1, 3, 3, 1, 1, 1, 1};
+    std::vector<int> _reduce_symbol_count = {1, 1, 3, 3, 3, 0, 0, 1, 1, 2, 1, 3, 1, 1, 1, 2, 1, 1, 2, 1, 1, 3, 1, 1, 2, 4, 1};
 
-    std::vector<int> _reduce_non_terminal_index = {7, 6, 15, 4, 11, 1, 2, 13, 14, 15, 5, 13, 12, 3, 9, 15, 2, 12, 10, 5, 3, 9, 14, 0, 8, 15, 1};
+    std::vector<int> _reduce_non_terminal_index = {6, 0, 12, 4, 7, 10, 1, 9, 15, 10, 12, 8, 7, 8, 0, 1, 2, 3, 11, 2, 4, 3, 5, 8, 14, 13, 8};
 
-    std::set<int> _none_grammar_tuple_reduce_set = {0, 1, 8, 11, 12, 13, 14, 15, 17, 20, 23, 24, 26};
+    std::set<int> _none_grammar_tuple_reduce_set = {0, 1, 7, 8, 10, 12, 13, 14, 16, 17, 19, 20, 22};
 };
 
 
 template <class T>
-class SemanticsAnalyzer {
+class Interpreter {
 public:
     using semantic_function = std::function<BosonSemanticsNode<T>(BosonSemanticsNode<T> &)>;
 
-    SemanticsAnalyzer() = default;
+    Interpreter() = default;
 
-    BosonSemanticsNode<T> semantics_analysis(BosonGrammarNode &grammar_tree) {
+    BosonSemanticsNode<T> execute(BosonGrammarNode &grammar_tree) {
         return this->_semantics_analysis(grammar_tree);
     }
 
-    static BosonSemanticsNode<T> default_semantics_entity(BosonSemanticsNode<T> &semantics_node) {
-        return semantics_node;
-    }
-
-    static BosonSemanticsNode<T> naive_semantics_entity(BosonSemanticsNode<T> &semantics_node) {
-        if (semantics_node.children().size() == 1) {
-            return semantics_node[0];
-        } else {
-            return semantics_node;
-        }
-    }
-
-    void semantics_entity(int reduce_number, semantic_function function) {
-        std::string reduce_name = "!grammar_" + std::to_string(reduce_number);
-        this->semantics_entity(reduce_name, function);
-    }
-
-    void semantics_entity(const char *reduce_name, semantic_function function) {
+    void register_action(const char *reduce_name, semantic_function function) {
         std::string reduce_name_string(reduce_name);
-        this->semantics_entity(reduce_name_string, function);
+        this->register_action(reduce_name_string, function);
     }
 
-    void semantics_entity(std::string &reduce_name, semantic_function function) {
-        this->_semantics_entity[reduce_name] = function;
+    void register_action(std::string &reduce_name, semantic_function function) {
+        this->_semantic_action_mapping[reduce_name] = function;
     }
 
 private:
     std::unordered_map<int, std::string> _reduce_number_grammar_name_mapping = {
-        {7, "set_variable"}, 
-        {18, "function"}, 
-        {22, "compute"}, 
-        {5, "compute"}, 
-        {21, "compute"}, 
-        {9, "expression"}, 
-        {2, "get_variable"}, 
-        {25, "number"}
+        {21, "set_variable"}, 
+        {25, "function"}, 
+        {3, "compute"}, 
+        {2, "compute"}, 
+        {4, "compute"}, 
+        {11, "expression"}, 
+        {26, "get_variable"}, 
+        {23, "number"}
     };
 
-    std::set<int> _naive_reduce_number_set = {2, 8, 11, 12, 13, 14, 15, 17, 20, 25, 26};
+    std::set<int> _naive_reduce_number_set = {1, 10, 12, 13, 14, 16, 17, 19, 20, 23, 26};
 
-    std::unordered_map<std::string, semantic_function> _semantics_entity{};
+    std::unordered_map<std::string, semantic_function> _semantic_action_mapping{};
 
     BosonSemanticsNode<T> _semantics_analysis(BosonGrammarNode &grammar_tree) {
         std::string grammar_name{};
@@ -643,12 +626,16 @@ private:
                 semantics_node.append(temp_node);
             }
         }
-        if (this->_semantics_entity.count(grammar_name)) {
-            return this->_semantics_entity[grammar_name](semantics_node);
+        if (this->_semantic_action_mapping.count(grammar_name)) {
+            return this->_semantic_action_mapping[grammar_name](semantics_node);
         } else if (this->_naive_reduce_number_set.count(grammar_tree.get_reduce_number())) {
-            return SemanticsAnalyzer::naive_semantics_entity(semantics_node);
+            if (semantics_node.children().size() == 1) {
+                return semantics_node[0];
+            } else {
+                return semantics_node;
+            }
         } else {
-            return SemanticsAnalyzer::default_semantics_entity(semantics_node);
+            return semantics_node;
         }
     }
 };

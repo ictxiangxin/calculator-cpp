@@ -38,14 +38,14 @@ int main(int argc, char** argv) {
     mpfr_set_default_prec(128);
     std::unordered_map<std::string, std::string> variables;
     Tokenizer tokenizer;
-    GrammarAnalyzer grammar;
-    SemanticsAnalyzer<mpfr_t> semantics;
+    Parser parser;
+    Interpreter<mpfr_t> interpreter;
     tokenizer.tokenize(code);
     if (tokenizer.tokenize(code) != tokenizer.no_error_line()) {
         std::cerr << "[ERROR] Lexical error, line: " << tokenizer.error_line() << std::endl;
         return -1;
     }
-    BosonGrammar grammar_tree = grammar.grammar_analysis(tokenizer.token_list());
+    BosonGrammar grammar_tree = parser.parse(tokenizer.token_list());
     if (grammar_tree.get_error_index() != grammar_tree.no_error_index()) {
         int line = tokenizer.token_list()[grammar_tree.get_error_index()].line;
         std::cerr << "[ERROR] Grammar error, line: " << line << std::endl;
@@ -57,18 +57,18 @@ int main(int argc, char** argv) {
         std::cerr << std::endl;
         return -1;
     }
-    semantics.semantics_entity("set_variable", [&variables](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
+    interpreter.register_action("set_variable", [&variables](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
         char number[1024];
         mpfr_snprintf(number, 1024, "%.32Rf", node[1].get_data());
         variables[node[0].get_text()] = number;
         return BosonSemanticsNode<mpfr_t>::null_node();
     });
-    semantics.semantics_entity("get_variable", [&variables](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
+    interpreter.register_action("get_variable", [&variables](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
         BosonSemanticsNode<mpfr_t> result;
         mpfr_init_set_str(result.get_data(), variables[node[0].get_text()].c_str(), 10, GMP_RNDD);
         return result;
     });
-    semantics.semantics_entity("function", [](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
+    interpreter.register_action("function", [](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
         BosonSemanticsNode<mpfr_t> function_return;
         mpfr_init(function_return.get_data());
         std::string function_name = node[0].get_text();
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
         }
         return function_return;
     });
-    semantics.semantics_entity("compute", [](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
+    interpreter.register_action("compute", [](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
         BosonSemanticsNode<mpfr_t> result;
         mpfr_init(result.get_data());
         BosonSemanticsNode<mpfr_t> &value_a = node[0];
@@ -108,14 +108,14 @@ int main(int argc, char** argv) {
         }
         return result;
     });
-    semantics.semantics_entity("number", [](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
+    interpreter.register_action("number", [](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
         BosonSemanticsNode<mpfr_t> result;
         mpfr_init_set_str(result.get_data(), node[0].get_text().c_str(), 10, GMP_RNDD);
         return result;
     });
-    semantics.semantics_entity("expression", [](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
+    interpreter.register_action("expression", [](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
         return node[0];
     });
-    semantics.semantics_analysis(grammar_tree.get_grammar_tree());
+    interpreter.execute(grammar_tree.get_grammar_tree());
     return 0;
 }

@@ -5,11 +5,11 @@
 ## 编写词法和语法描述的`boson script`，对应文件`parser.boson`。
 
 ```
-%sparse_table yes; # 使用稀疏分析表。
-%lexical_token_class_name Token; # 设置生成代码中的词元类名。
-%lexical_analyzer_class_name Tokenizer; # 设置生成代码中的词法分析器类名。
-%grammar_analyzer_class_name GrammarAnalyzer; # 设置生成代码中的语法分析器类名。
-%semantics_analyzer_class_name SemanticsAnalyzer;  # 设置生成代码中的语义分析器类名。
+%parser_sparse_table yes; # 使用稀疏分析表。
+%token_class_name Token; # 设置生成代码中的词元类名。
+%lexer_class_name Tokenizer; # 设置生成代码中的词法分析器类名。
+%parer_class_name Parser; # 设置生成代码中的语法分析器类名。
+%interpreter_class_name Interpreter;  # 设置生成代码中的语义分析器类名。
 %start_symbol calculator; # 指明起始分析符号。
 
 # 词法描述部分。
@@ -93,14 +93,14 @@ Boson v1.3 - Grammar analyzer generator
 
 ```c++
 Tokenizer tokenizer; // 创建词法分析器实例。
-GrammarAnalyzer grammar; // 创建语法分析器实例。
-SemanticsAnalyzer<mpfr_t> semantics; // 创建语义分析器实例。
+Parser parser; // 创建语法分析器实例。
+Interpreter<mpfr_t> interpreter; // 创建语义分析器实例。
 tokenizer.tokenize(code); // 对计算代码进行词法分析。
 if (tokenizer.tokenize(code) != tokenizer.no_error_line()) { // 如果错误行存在则代码存在词法错误。
     std::cerr << "[ERROR] Lexical error, line: " << tokenizer.error_line() << std::endl; // 打印错误对应行号。
     return -1;
 }
-BosonGrammar grammar_tree = grammar.grammar_analysis(tokenizer.token_list()); // 进行语法分析。
+BosonGrammar grammar_tree = parser.parse(tokenizer.token_list()); // 进行语法分析。
 if (grammar_tree.get_error_index() != -1) { // 如果错误行存在则代码存在语法错误。
     int line = tokenizer.token_list()[grammar_tree.get_error_index()].line; // 获取语法出错代码行号。
     std::cerr << "[ERROR] Grammar error, line: " << line << std::endl; // 打印出错代码行号。
@@ -117,7 +117,7 @@ if (grammar_tree.get_error_index() != -1) { // 如果错误行存在则代码存
 > 注册语义动作，以`function`函数调用语义动作为例。
 
 ```c++
-semantics.semantics_entity("function", [](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> { // 参数和返回值均为语义节点。
+interpreter.register_action("function", [](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> { // 参数和返回值均为语义节点。
     BosonSemanticsNode<mpfr_t> function_return; // 创建函数返回值语义节点。
     mpfr_init(function_return.get_data()); // 初始化返回值mpfr值。
     std::string function_name = node[0].get_text(); // 根据语法定义，函数调用第一个参数为函数名。
@@ -143,7 +143,7 @@ semantics.semantics_entity("function", [](BosonSemanticsNode<mpfr_t> &node) -> B
 > 调用语义分析完成计算过程。
 
 ```c++
-semantics.semantics_analysis(grammar_tree.get_grammar_tree());
+interpreter.execute(grammar_tree.get_grammar_tree());
 ```
 
 * * *
