@@ -17,13 +17,13 @@ namespace boson {
     public:
         Token() = default;
 
-        Token(std::string &text, const int line, std::string &symbol): text(text), line(line), symbol(symbol) {};
+        Token(std::string &text, const int line, std::string &symbol): text(text), line(line), symbol(symbol) {}
 
-        Token(const char *text, const int line, const char *symbol): text(text), line(line), symbol(symbol) {};
+        Token(const char *text, const int line, const char *symbol): text(text), line(line), symbol(symbol) {}
 
-        Token(const char *text, const int line, std::string &symbol): text(text), line(line), symbol(symbol) {};
+        Token(const char *text, const int line, std::string &symbol): text(text), line(line), symbol(symbol) {}
 
-        Token(std::string &text, const int line, const char *symbol): text(text), line(line), symbol(symbol) {};
+        Token(std::string &text, const int line, const char *symbol): text(text), line(line), symbol(symbol) {}
 
         std::string text{};
         int line = -1;
