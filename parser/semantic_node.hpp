@@ -18,12 +18,12 @@ namespace boson {
     template <class T>
     class BosonSemanticsNode {
     public:
-        BosonSemanticsNode() = default;
+        BosonSemanticsNode<T>() = default;
 
-        explicit BosonSemanticsNode(T data): _data(data) {};
+        explicit BosonSemanticsNode<T>(T data): _data(data) {}
 
-        static BosonSemanticsNode &null_node() {
-            static BosonSemanticsNode node;
+        static BosonSemanticsNode<T> &null_node() {
+            static BosonSemanticsNode<T> node;
             return node;
         }
 
@@ -31,8 +31,8 @@ namespace boson {
             return this->_data;
         }
 
-        void set_data(T data) {
-            this->_data = std::move(data);
+        void set_data(T &data) {
+            this->_data = data;
         }
 
         int get_reduce_number() {
@@ -51,26 +51,26 @@ namespace boson {
             this->_text = text;
         }
 
-        void append(const BosonSemanticsNode &item) {
+        void append(const BosonSemanticsNode<T> &item) {
             this->_children.push_back(item);
         }
 
-        void insert(int index, const BosonSemanticsNode &item) {
+        void insert(int index, const BosonSemanticsNode<T> &item) {
             this->_children.insert(this->_children.begin() + index, item);
         }
 
-        std::vector<BosonSemanticsNode> &children() {
+        std::vector<BosonSemanticsNode<T>> &children() {
             return this->_children;
         }
 
-        BosonSemanticsNode &operator[](int index) {
+        BosonSemanticsNode<T> &operator[](int index) {
             return this->_children[index];
         }
 
     protected:
         int _reduce_number = -1;
         std::string _text{};
-        std::vector<BosonSemanticsNode> _children{};
+        std::vector<BosonSemanticsNode<T>> _children{};
         T _data;
     };
 }
