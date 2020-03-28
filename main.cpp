@@ -3,7 +3,7 @@
 #include <sstream>
 #include <list>
 #include <mpfr.h>
-#include "parser.hpp"
+#include "parser/boson.hpp"
 
 
 void usage() {
@@ -37,15 +37,15 @@ int main(int argc, char** argv) {
     }
     mpfr_set_default_prec(128);
     std::unordered_map<std::string, std::string> variables;
-    Tokenizer tokenizer;
-    Parser parser;
-    Interpreter<mpfr_t> interpreter;
+    boson::Tokenizer tokenizer;
+    boson::Parser parser;
+    boson::Interpreter<mpfr_t> interpreter;
     tokenizer.tokenize(code);
     if (tokenizer.tokenize(code) != tokenizer.no_error_line()) {
         std::cerr << "[ERROR] Lexical error, line: " << tokenizer.error_line() << std::endl;
         return -1;
     }
-    BosonGrammar grammar_tree = parser.parse(tokenizer.token_list());
+    boson::BosonGrammar grammar_tree = parser.parse(tokenizer.token_list());
     if (grammar_tree.get_error_index() != grammar_tree.no_error_index()) {
         int line = tokenizer.token_list()[grammar_tree.get_error_index()].line;
         std::cerr << "[ERROR] Grammar error, line: " << line << std::endl;
@@ -57,22 +57,22 @@ int main(int argc, char** argv) {
         std::cerr << std::endl;
         return -1;
     }
-    interpreter.register_action("set_variable", [&variables](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
+    interpreter.register_action("set_variable", [&variables](boson::BosonSemanticsNode<mpfr_t> &node) -> boson::BosonSemanticsNode<mpfr_t> {
         char number[1024];
         mpfr_snprintf(number, 1024, "%.32Rf", node[1].get_data());
         variables[node[0].get_text()] = number;
-        return BosonSemanticsNode<mpfr_t>::null_node();
+        return boson::BosonSemanticsNode<mpfr_t>::null_node();
     });
-    interpreter.register_action("get_variable", [&variables](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
-        BosonSemanticsNode<mpfr_t> result;
+    interpreter.register_action("get_variable", [&variables](boson::BosonSemanticsNode<mpfr_t> &node) -> boson::BosonSemanticsNode<mpfr_t> {
+        boson::BosonSemanticsNode<mpfr_t> result;
         mpfr_init_set_str(result.get_data(), variables[node[0].get_text()].c_str(), 10, GMP_RNDD);
         return result;
     });
-    interpreter.register_action("function", [](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
-        BosonSemanticsNode<mpfr_t> function_return;
+    interpreter.register_action("function", [](boson::BosonSemanticsNode<mpfr_t> &node) -> boson::BosonSemanticsNode<mpfr_t> {
+        boson::BosonSemanticsNode<mpfr_t> function_return;
         mpfr_init(function_return.get_data());
         std::string function_name = node[0].get_text();
-        BosonSemanticsNode<mpfr_t> &arguments = node[1];
+        boson::BosonSemanticsNode<mpfr_t> &arguments = node[1];
         if (function_name == "sqrt") {
             mpfr_sqrt(function_return.get_data(), arguments[0].get_data(), GMP_RNDD);
         } else if (function_name == "sin") {
@@ -85,16 +85,16 @@ int main(int argc, char** argv) {
             mpfr_pow(function_return.get_data(), arguments[0].get_data(), arguments[1].get_data(), GMP_RNDD);
         } else if (function_name == "print") {
             mpfr_printf("%.32Rf\n", arguments[0].get_data());
-            return BosonSemanticsNode<mpfr_t>::null_node();
+            return boson::BosonSemanticsNode<mpfr_t>::null_node();
         }
         return function_return;
     });
-    interpreter.register_action("compute", [](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
-        BosonSemanticsNode<mpfr_t> result;
+    interpreter.register_action("compute", [](boson::BosonSemanticsNode<mpfr_t> &node) -> boson::BosonSemanticsNode<mpfr_t> {
+        boson::BosonSemanticsNode<mpfr_t> result;
         mpfr_init(result.get_data());
-        BosonSemanticsNode<mpfr_t> &value_a = node[0];
-        BosonSemanticsNode<mpfr_t> &op = node[1];
-        BosonSemanticsNode<mpfr_t> &value_b = node[2];
+        boson::BosonSemanticsNode<mpfr_t> &value_a = node[0];
+        boson::BosonSemanticsNode<mpfr_t> &op = node[1];
+        boson::BosonSemanticsNode<mpfr_t> &value_b = node[2];
         if (op.get_text() == "+") {
             mpfr_add(result.get_data(), value_a.get_data(), value_b.get_data(), GMP_RNDD);
         } else if (op.get_text() == "-") {
@@ -108,12 +108,12 @@ int main(int argc, char** argv) {
         }
         return result;
     });
-    interpreter.register_action("number", [](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
-        BosonSemanticsNode<mpfr_t> result;
+    interpreter.register_action("number", [](boson::BosonSemanticsNode<mpfr_t> &node) -> boson::BosonSemanticsNode<mpfr_t> {
+        boson::BosonSemanticsNode<mpfr_t> result;
         mpfr_init_set_str(result.get_data(), node[0].get_text().c_str(), 10, GMP_RNDD);
         return result;
     });
-    interpreter.register_action("expression", [](BosonSemanticsNode<mpfr_t> &node) -> BosonSemanticsNode<mpfr_t> {
+    interpreter.register_action("expression", [](boson::BosonSemanticsNode<mpfr_t> &node) -> boson::BosonSemanticsNode<mpfr_t> {
         return node[0];
     });
     interpreter.execute(grammar_tree.get_grammar_tree());

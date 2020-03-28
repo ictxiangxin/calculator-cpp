@@ -52,11 +52,10 @@ expression_final: '(' expression ')' = expression($1) # 最终表达式可以是
 
 ## 使用boson生成对应的分析器。
 
-> 执行`boson parser.boson -a slr -l c++ -o parser.hpp`生成对应的分析器代码到`parser.hpp`文件。
+> 执行`boson parser.boson -a slr -l c++ -o parser`生成对应的分析器代码到`parser`目录。
 
 ```
->>> boson parser.boson -a slr -l c++ -o parser.hpp
-Boson v1.3 - Grammar analyzer generator
+Boson v1.5 - Grammar analyzer generator
     Author: ict
     Email:  ictxiangxin@hotmail.com
     URL:    https://github.com/ictxiangxin/boson
@@ -66,23 +65,24 @@ Boson v1.3 - Grammar analyzer generator
         > Commands Count: 6
         > Lexical Definition: Yes
         > Grammar Definition: Yes
-    [2] Generate Lexical Analysis Table... Done [0.0800s]
+    [2] Generate Lexical Analysis Table... Done [0.0580s]
         > Lexical Definition Count: 13
         > Character Set Size: 77
         > DFA State Count: 6
-    [3] Generate Grammar Analysis Table... Done [0.0060s]
-        > Algorithm: LALR
+    [3] Generate Grammar Analysis Table... Done [0.0010s]
+        > Algorithm: SLR
         > Grammar Sentence Count: 26
         > Non-Terminal Symbol Count: 16
         > Terminal Symbol Count: 12
         > PDA State Count: 37
         > Action Table Size/Sparse-Size (Rate): 481/168 (34.93%)
         > Goto Table Size/Sparse-Size (Rate): 592/48 (8.11%)
-    [4] Generate Code... Done [0.0830s]
+    [4] Generate Code... Done [0.0630s]
         > Language: C++
         > Generate Lexer: Yes
         > Generate Parser: Yes
-[Complete!!! 0.1819s]
+        > Output Path: "parser"
+[Complete!!! 0.1300s]
 ```
 
 * * *
