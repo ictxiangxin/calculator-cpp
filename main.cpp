@@ -40,9 +40,8 @@ int main(int argc, char** argv) {
     boson::Tokenizer tokenizer;
     boson::Parser parser;
     boson::Interpreter<mpfr_t> interpreter;
-    tokenizer.tokenize(code);
-    if (tokenizer.tokenize(code) != tokenizer.no_error_line()) {
-        std::cerr << "[ERROR] Lexical error, line: " << tokenizer.error_line() << std::endl;
+    if (tokenizer.tokenize(code) != tokenizer.no_error_index()) {
+        std::cerr << "[ERROR] Lexical error, index: " << tokenizer.error_index() << std::endl;
         return -1;
     }
     boson::BosonGrammar grammar_tree = parser.parse(tokenizer.token_list());

@@ -42,16 +42,16 @@ namespace boson {
 
     private:
         std::unordered_map<int, std::string> _reduce_number_grammar_name_mapping = {
-            {14, "set_variable"}, 
-            {8, "function"}, 
-            {4, "compute"}, 
-            {23, "compute"}, 
-            {6, "compute"}, 
-            {20, "expression"}, 
-            {21, "get_variable"}, 
-            {19, "number"}
+            {11, "set_variable"}, 
+            {18, "function"}, 
+            {7, "compute"}, 
+            {5, "compute"}, 
+            {22, "compute"}, 
+            {19, "expression"}, 
+            {16, "get_variable"}, 
+            {13, "number"}
         };
-        std::set<int> _naive_reduce_number_set = {3, 5, 9, 10, 12, 13, 17, 19, 21, 24, 25};
+        std::set<int> _naive_reduce_number_set = {1, 2, 3, 6, 8, 12, 13, 16, 21, 23, 25};
         std::unordered_map<std::string, semantic_function> _semantic_action_mapping{};
 
         BosonSemanticsNode<T> _semantics_analysis(BosonGrammarNode &grammar_tree) {

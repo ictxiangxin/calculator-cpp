@@ -37,12 +37,12 @@ namespace boson {
             this->_line++;
         }
 
-        int error_line() const {
-            return _error_line;
+        int error_index() const {
+            return _error_index;
         }
 
-        int no_error_line() const {
-            return _no_error_line;
+        int no_error_index() const {
+            return _no_error_index;
         }
 
         int tokenize(std::string text) {
@@ -50,7 +50,7 @@ namespace boson {
             this->_line = 1;
             int state = this->_start_state;
             std::string token_string{};
-            unsigned long index = 0;
+            int index = 0;
             while (index < text.length()) {
                 char character = text[index];
                 index++;
@@ -95,16 +95,16 @@ namespace boson {
                         if (this->_end_state_set.count(state)) {
                             get_token = true;
                         } else {
-                            this->_error_line = this->_line;
-                            return this->_error_line;
+                            this->_error_index = index - 1;
+                            return this->_error_index;
                         }
                     }
                 } else {
                     if (this->_end_state_set.count(state)) {
                         get_token = true;
                     } else {
-                        this->_error_line = this->_line;
-                        return this->_error_line;
+                        this->_error_index = index - 1;
+                        return this->_error_index;
                     }
                 }
                 if (get_token) {
@@ -117,10 +117,11 @@ namespace boson {
             if (this->_end_state_set.count(state)) {
                 this->_generate_token(state, token_string);
             } else {
-                throw std::runtime_error("Invalid state.");
+                this->_error_index = index - 1;
+                return this->_error_index;
             }
             this->_token_list.emplace_back("", this->_line, "$");
-            return this->_error_line;
+            return this->_error_index;
         }
 
         void register_function(std::string &function_name, lexical_function &function) {
@@ -130,8 +131,8 @@ namespace boson {
     private:
         std::vector<Token> _token_list{};
         int _line = 1;
-        int _error_line = -1;
-        int _no_error_line = -1;
+        int _error_index = -1;
+        int _no_error_index = -1;
         bool _skip = false;
         std::unordered_map<int, std::vector<std::tuple<int, std::set<char>, std::vector<std::tuple<char, char>>, int>>> _compact_move_table = {
             {0, {
@@ -167,7 +168,7 @@ namespace boson {
                 {0, {'\x5f'}, {{'\x30', '\x39'}, {'\x41', '\x5a'}, {'\x61', '\x7a'}}, 1}
             }}
         };
-        std::set<char> _character_set = {'\x4c', '\x55', '\x28', '\x09', '\x46', '\x71', '\x54', '\x32', '\x59', '\x78', '\x4e', '\x44', '\x2c', '\x49', '\x4a', '\x79', '\x6b', '\x37', '\x0a', '\x42', '\x6f', '\x70', '\x58', '\x63', '\x65', '\x5e', '\x52', '\x2f', '\x7a', '\x29', '\x2a', '\x2e', '\x67', '\x66', '\x5f', '\x64', '\x74', '\x43', '\x6c', '\x36', '\x72', '\x4d', '\x77', '\x4f', '\x47', '\x38', '\x57', '\x75', '\x53', '\x6a', '\x61', '\x45', '\x41', '\x34', '\x0d', '\x2d', '\x33', '\x62', '\x69', '\x48', '\x76', '\x35', '\x5a', '\x30', '\x56', '\x6d', '\x68', '\x39', '\x50', '\x2b', '\x3d', '\x6e', '\x4b', '\x51', '\x73', '\x20', '\x31'};
+        std::set<char> _character_set = {'\x4a', '\x69', '\x5e', '\x48', '\x5f', '\x76', '\x34', '\x49', '\x41', '\x43', '\x72', '\x0a', '\x33', '\x54', '\x68', '\x6a', '\x2a', '\x7a', '\x2f', '\x32', '\x2c', '\x09', '\x46', '\x2b', '\x73', '\x0d', '\x6e', '\x39', '\x4e', '\x28', '\x20', '\x38', '\x6b', '\x74', '\x47', '\x70', '\x50', '\x44', '\x77', '\x53', '\x45', '\x67', '\x78', '\x58', '\x63', '\x42', '\x56', '\x31', '\x71', '\x52', '\x79', '\x35', '\x3d', '\x59', '\x6d', '\x4f', '\x6c', '\x65', '\x4d', '\x61', '\x37', '\x62', '\x6f', '\x4b', '\x75', '\x5a', '\x51', '\x36', '\x29', '\x64', '\x4c', '\x57', '\x2d', '\x55', '\x66', '\x2e', '\x30'};
         int _start_state = 0;
         std::set<int> _end_state_set = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
         std::unordered_map<int, std::string> _lexical_symbol_mapping = {

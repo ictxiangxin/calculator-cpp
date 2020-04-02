@@ -61,28 +61,30 @@ Boson v1.5 - Grammar analyzer generator
     URL:    https://github.com/ictxiangxin/boson
 
 [Generate Analyzer Code]
-    [1] Parse Boson Script... Done [0.0040s]
+    [1] Parse Boson Script... Done [0.0030s]
         > Commands Count: 6
         > Lexical Definition: Yes
         > Grammar Definition: Yes
-    [2] Generate Lexical Analysis Table... Done [0.0580s]
+    [2] Generate Lexical Analysis Table... Done [0.0582s]
         > Lexical Definition Count: 13
         > Character Set Size: 77
         > DFA State Count: 6
-    [3] Generate Grammar Analysis Table... Done [0.0010s]
-        > Algorithm: SLR
+    [3] Generate Grammar Analysis Table... Done [0.0040s]
+        > Algorithm: LALR
         > Grammar Sentence Count: 26
         > Non-Terminal Symbol Count: 16
         > Terminal Symbol Count: 12
         > PDA State Count: 37
         > Action Table Size/Sparse-Size (Rate): 481/168 (34.93%)
         > Goto Table Size/Sparse-Size (Rate): 592/48 (8.11%)
-    [4] Generate Code... Done [0.0630s]
+    [4] Generate Code... Done [0.0690s]
         > Language: C++
+        > Mode: Integration
+        > Checker: No
         > Generate Lexer: Yes
         > Generate Parser: Yes
         > Output Path: "parser"
-[Complete!!! 0.1300s]
+[Complete!!! 0.1403s]
 ```
 
 * * *
@@ -96,8 +98,8 @@ Tokenizer tokenizer; // 创建词法分析器实例。
 Parser parser; // 创建语法分析器实例。
 Interpreter<mpfr_t> interpreter; // 创建语义分析器实例。
 tokenizer.tokenize(code); // 对计算代码进行词法分析。
-if (tokenizer.tokenize(code) != tokenizer.no_error_line()) { // 如果错误行存在则代码存在词法错误。
-    std::cerr << "[ERROR] Lexical error, line: " << tokenizer.error_line() << std::endl; // 打印错误对应行号。
+if (tokenizer.tokenize(code) != tokenizer.no_error_index()) { // 如果错误行存在则代码存在词法错误。
+    std::cerr << "[ERROR] Lexical error, index: " << tokenizer.error_index() << std::endl; // 打印错误对应行号。
     return -1;
 }
 BosonGrammar grammar_tree = parser.parse(tokenizer.token_list()); // 进行语法分析。
