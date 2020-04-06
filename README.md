@@ -27,7 +27,7 @@ statement: t_symbol '=' expression = set_variable($0, $2) # 语句可以是一�
 
 function: t_symbol '(' arguments ')' = function($0, $2); # 函数调用由函数名和参数列表组成，使用function动作带入t_symbol和arguments进行语义处理。
 
-arguments: expression (',' expression)* = ($0, *$1($1)); # 参数列表由若干表达式构成，参数间用','隔开。
+arguments: expression (',' expression)* = ($0, *$1[$1]); # 参数列表由若干表达式构成，参数间用','隔开。
 
 expression: expression ('+' | '-') expression_high = compute($0, *$1, $2) # 表达式的低优先级运算符：'+'、'-'，使用compute语义动作进行计算。
           | expression_high # 派生到高优先级表达式。
@@ -41,7 +41,7 @@ expression_top: expression_top '^' expression_final = compute($0, $1, $2) # 表�
               | expression_final # 派生到最终表达式。
               ;
 
-expression_final: '(' expression ')' = expression($1) # 最终表达式可以是由括号包围的子表达式。
+expression_final: '(' expression ')' = [$1] # 最终表达式可以是由括号包围的子表达式。
                 | function # 最终表达式可以是函数调用的返回值。
                 | t_symbol = get_variable($0) # 最终表达式可以是一个变量值。
                 | t_number = number($0)  # 最终表达式可以是一个立即数。

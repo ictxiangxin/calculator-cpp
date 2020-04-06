@@ -22,9 +22,12 @@ namespace boson {
 
         explicit BosonSemanticsNode<T>(T data): _data(data) {}
 
-        static BosonSemanticsNode<T> &null_node() {
-            static BosonSemanticsNode<T> node;
-            return node;
+        void make_null() {
+            this->_is_null;
+        }
+
+        bool is_null() {
+            return this->_is_null;
         }
 
         T &get_data() {
@@ -67,11 +70,18 @@ namespace boson {
             return this->_children[index];
         }
 
+        static BosonSemanticsNode<T> null_node() {
+            static BosonSemanticsNode<T> node;
+            node.make_null();
+            return node;
+        }
+
     protected:
         int _reduce_number = -1;
         std::string _text{};
         std::vector<BosonSemanticsNode<T>> _children{};
         T _data;
+        bool _is_null = false;
     };
 }
 

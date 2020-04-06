@@ -42,16 +42,15 @@ namespace boson {
 
     private:
         std::unordered_map<int, std::string> _reduce_number_grammar_name_mapping = {
-            {11, "set_variable"}, 
-            {18, "function"}, 
-            {7, "compute"}, 
-            {5, "compute"}, 
-            {22, "compute"}, 
-            {19, "expression"}, 
-            {16, "get_variable"}, 
-            {13, "number"}
+            {15, "set_variable"}, 
+            {1, "function"}, 
+            {11, "compute"}, 
+            {10, "compute"}, 
+            {2, "compute"}, 
+            {24, "get_variable"}, 
+            {14, "number"}
         };
-        std::set<int> _naive_reduce_number_set = {1, 2, 3, 6, 8, 12, 13, 16, 21, 23, 25};
+        std::set<int> _naive_reduce_number_set = {3, 5, 7, 12, 14, 17, 19, 21, 23, 24, 25, 26};
         std::unordered_map<std::string, semantic_function> _semantic_action_mapping{};
 
         BosonSemanticsNode<T> _semantics_analysis(BosonGrammarNode &grammar_tree) {
@@ -61,27 +60,27 @@ namespace boson {
             } else {
                 grammar_name = "!grammar_hidden";
             }
-            BosonSemanticsNode<T> semantics_node;
-            for (auto &node: grammar_tree.children()) {
-                if (!node.children().empty()) {
-                    semantics_node.append(this->_semantics_analysis(node));
-                } else {
-                    BosonSemanticsNode<T> temp_node;
-                    temp_node.set_reduce_number(node.get_reduce_number());
-                    temp_node.set_text(node.get_text());
-                    semantics_node.append(temp_node);
+            BosonSemanticsNode<T> semantic_node;
+            if (grammar_tree.children().empty()) {
+                semantic_node.set_reduce_number(grammar_tree.get_reduce_number());
+                semantic_node.set_text(grammar_tree.get_text());
+            } else {
+                for (auto &grammar_node: grammar_tree.children()) {
+                    semantic_node.append(this->_semantics_analysis(grammar_node));
                 }
             }
             if (this->_semantic_action_mapping.count(grammar_name)) {
-                return this->_semantic_action_mapping[grammar_name](semantics_node);
+                return this->_semantic_action_mapping[grammar_name](semantic_node);
             } else if (this->_naive_reduce_number_set.count(grammar_tree.get_reduce_number())) {
-                if (semantics_node.children().size() == 1) {
-                    return semantics_node[0];
+                if (semantic_node.children().empty()) {
+                    return BosonSemanticsNode<T>::null_node();
+                } else if (semantic_node.children().size() == 1) {
+                    return semantic_node[0];
                 } else {
-                    return semantics_node;
+                    return semantic_node;
                 }
             } else {
-                return semantics_node;
+                return semantic_node;
             }
         }
     };

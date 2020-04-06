@@ -19,7 +19,7 @@ statement: t_symbol '=' expression = set_variable($0, $2)
 
 function: t_symbol '(' arguments ')' = function($0, $2);
 
-arguments: expression (',' expression)* = ($0, *$1*($1));
+arguments: expression (',' expression)* = ($0, *$1[$1]);
 
 expression: expression ('+' | '-') expression_high = compute($0, *$1, $2)
           | expression_high
@@ -33,7 +33,7 @@ expression_top: expression_top '^' expression_final = compute($0, $1, $2)
               | expression_final
               ;
 
-expression_final: '(' expression ')' = expression($1)
+expression_final: '(' expression ')' = [$1]
                 | function
                 | t_symbol = get_variable($0)
                 | t_number = number($0)

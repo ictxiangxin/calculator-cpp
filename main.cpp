@@ -112,9 +112,6 @@ int main(int argc, char** argv) {
         mpfr_init_set_str(result.get_data(), node[0].get_text().c_str(), 10, GMP_RNDD);
         return result;
     });
-    interpreter.register_action("expression", [](boson::BosonSemanticsNode<mpfr_t> &node) -> boson::BosonSemanticsNode<mpfr_t> {
-        return node[0];
-    });
     interpreter.execute(grammar_tree.get_grammar_tree());
     return 0;
 }

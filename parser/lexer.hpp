@@ -29,6 +29,10 @@ namespace boson {
             return this->_token_list;
         }
 
+        int line() const {
+            this->_line;
+        }
+
         void skip() {
             this->_skip = true;
         }
@@ -168,7 +172,7 @@ namespace boson {
                 {0, {'\x5f'}, {{'\x30', '\x39'}, {'\x41', '\x5a'}, {'\x61', '\x7a'}}, 1}
             }}
         };
-        std::set<char> _character_set = {'\x4a', '\x69', '\x5e', '\x48', '\x5f', '\x76', '\x34', '\x49', '\x41', '\x43', '\x72', '\x0a', '\x33', '\x54', '\x68', '\x6a', '\x2a', '\x7a', '\x2f', '\x32', '\x2c', '\x09', '\x46', '\x2b', '\x73', '\x0d', '\x6e', '\x39', '\x4e', '\x28', '\x20', '\x38', '\x6b', '\x74', '\x47', '\x70', '\x50', '\x44', '\x77', '\x53', '\x45', '\x67', '\x78', '\x58', '\x63', '\x42', '\x56', '\x31', '\x71', '\x52', '\x79', '\x35', '\x3d', '\x59', '\x6d', '\x4f', '\x6c', '\x65', '\x4d', '\x61', '\x37', '\x62', '\x6f', '\x4b', '\x75', '\x5a', '\x51', '\x36', '\x29', '\x64', '\x4c', '\x57', '\x2d', '\x55', '\x66', '\x2e', '\x30'};
+        std::set<char> _character_set = {'\x5f', '\x7a', '\x6f', '\x5e', '\x62', '\x67', '\x20', '\x66', '\x2c', '\x76', '\x34', '\x61', '\x69', '\x2f', '\x44', '\x71', '\x56', '\x64', '\x50', '\x4d', '\x6c', '\x4f', '\x2e', '\x65', '\x4c', '\x52', '\x6d', '\x5a', '\x6e', '\x51', '\x72', '\x49', '\x39', '\x4a', '\x4e', '\x3d', '\x73', '\x38', '\x46', '\x30', '\x33', '\x2b', '\x53', '\x57', '\x47', '\x42', '\x59', '\x32', '\x37', '\x0d', '\x2a', '\x48', '\x68', '\x70', '\x43', '\x41', '\x28', '\x58', '\x4b', '\x2d', '\x09', '\x77', '\x6a', '\x36', '\x78', '\x31', '\x75', '\x74', '\x63', '\x35', '\x45', '\x79', '\x55', '\x29', '\x0a', '\x54', '\x6b'};
         int _start_state = 0;
         std::set<int> _end_state_set = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
         std::unordered_map<int, std::string> _lexical_symbol_mapping = {
@@ -189,8 +193,6 @@ namespace boson {
         };
         std::set<int> _non_greedy_state_set = {};
         std::unordered_map<std::string, std::vector<std::string>> _symbol_function_mapping = {
-            {"t_symbol", {}},
-            {"t_number", {}},
             {"skip", {"skip"}},
             {"newline", {"skip","newline"}}
         };
