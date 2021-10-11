@@ -1,5 +1,5 @@
 /*
-    Boson v1.5 - Grammar analyzer generator
+    Boson v1.5 - Grammar Analyzer Generator
 
         Author: ict
         Email:  ictxiangxin@hotmail.com
@@ -13,19 +13,22 @@
 #define _BOSON_TOKEN_HPP_
 
 namespace boson {
+    using char_t = char;
+    using string_t = std::string;
+
     class Token {
     public:
         Token() = default;
 
-        Token(std::string &text, const int line, std::string &symbol): text(text), line(line), symbol(symbol) {}
+        Token(const string_t &text, const int line, std::string &symbol): text(text), line(line), symbol(symbol) {}
 
-        Token(const char *text, const int line, const char *symbol): text(text), line(line), symbol(symbol) {}
+        Token(const char_t *text, const int line, const char *symbol): text(text), line(line), symbol(symbol) {}
 
-        Token(const char *text, const int line, std::string &symbol): text(text), line(line), symbol(symbol) {}
+        Token(const char_t *text, const int line, std::string &symbol): text(text), line(line), symbol(symbol) {}
 
-        Token(std::string &text, const int line, const char *symbol): text(text), line(line), symbol(symbol) {}
+        Token(const string_t &text, const int line, const char *symbol): text(text), line(line), symbol(symbol) {}
 
-        std::string text{};
+        string_t text{};
         int line = -1;
         std::string symbol{};
     };

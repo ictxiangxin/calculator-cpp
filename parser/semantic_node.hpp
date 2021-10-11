@@ -1,5 +1,5 @@
 /*
-    Boson v1.5 - Grammar analyzer generator
+    Boson v1.5 - Grammar Analyzer Generator
 
         Author: ict
         Email:  ictxiangxin@hotmail.com

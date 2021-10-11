@@ -1,5 +1,5 @@
 /*
-    Boson v1.5 - Grammar analyzer generator
+    Boson v1.5 - Grammar Analyzer Generator
 
         Author: ict
         Email:  ictxiangxin@hotmail.com
@@ -21,7 +21,7 @@
 namespace boson {
     class Tokenizer {
     public:
-        using lexical_function = std::function<std::string &(std::string &)>;
+        using lexical_function = std::function<string_t &(string_t &)>;
 
         Tokenizer() = default;
 
@@ -49,27 +49,27 @@ namespace boson {
             return _no_error_index;
         }
 
-        int tokenize(std::string text) {
+        int tokenize(string_t text) {
             this->_token_list.clear();
             this->_line = 1;
             int state = this->_start_state;
-            std::string token_string{};
+            string_t token_string{};
             int index = 0;
             while (index < text.length()) {
-                char character = text[index];
+                char_t character = text[index];
                 index++;
                 bool get_token = false;
                 if (this->_non_greedy_state_set.count(state)) {
                     get_token = true;
                 }
                 if (this->_compact_move_table.count(state)) {
-                    std::vector<std::tuple<int, std::set<char>, std::vector<std::tuple<char, char>>, int>> state_move_table = this->_compact_move_table[state];
+                    std::vector<std::tuple<int, std::set<char_t>, std::vector<std::tuple<char_t, char_t>>, int>> state_move_table = this->_compact_move_table[state];
                     unsigned long i;
                     for (i = 0; i < state_move_table.size(); i++) {
-                        std::tuple<int, std::set<char>, std::vector<std::tuple<char, char>>, int> compact_table = state_move_table[i];
+                        std::tuple<int, std::set<char_t>, std::vector<std::tuple<char_t, char_t>>, int> compact_table = state_move_table[i];
                         int attribute = std::get<0>(compact_table);
-                        std::set<char> &character_set = std::get<1>(compact_table);
-                        std::vector<std::tuple<char, char>> &range_list = std::get<2>(compact_table);
+                        std::set<char_t> &character_set = std::get<1>(compact_table);
+                        std::vector<std::tuple<char_t, char_t>> &range_list = std::get<2>(compact_table);
                         int next_state = std::get<3>(compact_table);
                         bool condition;
                         if (attribute == 2) {
@@ -138,41 +138,41 @@ namespace boson {
         int _error_index = -1;
         int _no_error_index = -1;
         bool _skip = false;
-        std::unordered_map<int, std::vector<std::tuple<int, std::set<char>, std::vector<std::tuple<char, char>>, int>>> _compact_move_table = {
+        std::unordered_map<int, std::vector<std::tuple<int, std::set<char_t>, std::vector<std::tuple<char_t, char_t>>, int>>> _compact_move_table = {
             {0, {
-                {0, {'\x5f'}, {{'\x41', '\x5a'}, {'\x61', '\x7a'}}, 1},
-                {0, {}, {{'\x30', '\x39'}}, 2},
-                {0, {'\x20', '\x09'}, {}, 3},
-                {0, {'\x0d'}, {}, 4},
-                {0, {'\x0a'}, {}, 5},
-                {0, {'\x3d'}, {}, 6},
-                {0, {'\x28'}, {}, 7},
-                {0, {'\x29'}, {}, 8},
-                {0, {'\x2c'}, {}, 9},
-                {0, {'\x2b'}, {}, 10},
-                {0, {'\x2d'}, {}, 11},
-                {0, {'\x2a'}, {}, 12},
-                {0, {'\x2f'}, {}, 13},
-                {0, {'\x5e'}, {}, 14}
-            }},
-            {15, {
-                {0, {}, {{'\x30', '\x39'}}, 15}
+                {0, {'_'}, {{'A', 'Z'}, {'a', 'z'}}, 1},
+                {0, {}, {{'0', '9'}}, 2},
+                {0, {'\t', ' '}, {}, 3},
+                {0, {'\r'}, {}, 4},
+                {0, {'\n'}, {}, 5},
+                {0, {'='}, {}, 6},
+                {0, {'('}, {}, 7},
+                {0, {','}, {}, 8},
+                {0, {')'}, {}, 9},
+                {0, {'^'}, {}, 10},
+                {0, {'*'}, {}, 11},
+                {0, {'/'}, {}, 12},
+                {0, {'+'}, {}, 13},
+                {0, {'-'}, {}, 14}
             }},
             {4, {
-                {0, {'\x0a'}, {}, 5}
+                {0, {'\n'}, {}, 5}
             }},
             {3, {
-                {0, {'\x20', '\x09'}, {}, 3}
+                {0, {'\t', ' '}, {}, 3}
             }},
             {2, {
-                {0, {}, {{'\x30', '\x39'}}, 2},
-                {0, {'\x2e'}, {}, 15}
+                {0, {'.'}, {}, 15},
+                {0, {}, {{'0', '9'}}, 2}
+            }},
+            {15, {
+                {0, {}, {{'0', '9'}}, 15}
             }},
             {1, {
-                {0, {'\x5f'}, {{'\x30', '\x39'}, {'\x41', '\x5a'}, {'\x61', '\x7a'}}, 1}
+                {0, {'_'}, {{'0', '9'}, {'A', 'Z'}, {'a', 'z'}}, 1}
             }}
         };
-        std::set<char> _character_set = {'\x5f', '\x7a', '\x6f', '\x5e', '\x62', '\x67', '\x20', '\x66', '\x2c', '\x76', '\x34', '\x61', '\x69', '\x2f', '\x44', '\x71', '\x56', '\x64', '\x50', '\x4d', '\x6c', '\x4f', '\x2e', '\x65', '\x4c', '\x52', '\x6d', '\x5a', '\x6e', '\x51', '\x72', '\x49', '\x39', '\x4a', '\x4e', '\x3d', '\x73', '\x38', '\x46', '\x30', '\x33', '\x2b', '\x53', '\x57', '\x47', '\x42', '\x59', '\x32', '\x37', '\x0d', '\x2a', '\x48', '\x68', '\x70', '\x43', '\x41', '\x28', '\x58', '\x4b', '\x2d', '\x09', '\x77', '\x6a', '\x36', '\x78', '\x31', '\x75', '\x74', '\x63', '\x35', '\x45', '\x79', '\x55', '\x29', '\x0a', '\x54', '\x6b'};
+        std::set<char_t> _character_set = {'K', 'p', '6', 'P', 'e', '^', 'q', 'X', '2', 'a', 'L', 'U', 't', 's', 'h', 'D', 'V', '1', '\r', 'u', '\t', 'l', 'O', 'x', 'B', '\n', 'I', 'E', '_', 'y', 'Y', 'W', 'A', '=', 'S', '/', 'z', 'm', '-', '+', 'f', 'i', 'T', ')', 'k', 'j', 'G', 'R', 'N', 'v', 'r', '0', '3', ' ', 'Z', 'd', '(', 'g', 'c', 'M', '9', '7', '8', 'w', 'n', 'H', 'F', '4', '5', '.', ',', 'J', 'b', 'C', 'o', '*', 'Q'};
         int _start_state = 0;
         std::set<int> _end_state_set = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
         std::unordered_map<int, std::string> _lexical_symbol_mapping = {
@@ -198,7 +198,7 @@ namespace boson {
         };
         std::unordered_map<std::string, lexical_function> _lexical_function{};
 
-        std::string &_invoke_lexical_function(std::string &symbol, std::string &token_string) {
+        string_t &_invoke_lexical_function(std::string &symbol, string_t &token_string) {
             this->_skip = false;
             if (this->_symbol_function_mapping.count(symbol)) {
                 for (const auto& function : this->_symbol_function_mapping[symbol]) {
@@ -214,7 +214,7 @@ namespace boson {
             return token_string;
         }
 
-        void _generate_token(int state, std::string &token_string) {
+        void _generate_token(int state, string_t &token_string) {
             std::string symbol;
             if (this->_lexical_symbol_mapping.count(state)) {
                 symbol = this->_lexical_symbol_mapping[state];

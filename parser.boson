@@ -3,6 +3,8 @@
 %lexer_class_name Tokenizer;
 %parser_class_name Parser;
 %interpreter_class_name Interpreter;
+%conflict_resolver yes;
+%shift_reduce_conflict_resolver order;
 %start_symbol calculator;
 
 t_symbol = <[_a-zA-Z][_a-zA-Z0-9]*>;
@@ -17,24 +19,13 @@ statement: t_symbol '=' expression = set_variable($0, $2)
          | function
          ;
 
-function: t_symbol '(' arguments ')' = function($0, $2);
+function: t_symbol '(' expression (',' expression)* ')' = function($0, $2, *$3[$1]);
 
-arguments: expression (',' expression)* = ($0, *$1[$1]);
-
-expression: expression ('+' | '-') expression_high = compute($0, *$1, $2)
-          | expression_high
+expression: expression '^' expression = compute($0, $1, $2)
+          | expression ('*' | '/') expression = compute($0, *$1, $2)
+          | expression ('+' | '-') expression = compute($0, *$1, $2)
+          | '(' expression ')' = [$1]
+          | function
+          | t_symbol = get_variable($0)
+          | t_number = number($0)
           ;
-
-expression_high: expression_high ('*' | '/') expression_top = compute($0, *$1, $2)
-               | expression_top
-               ;
-
-expression_top: expression_top '^' expression_final = compute($0, $1, $2)
-              | expression_final
-              ;
-
-expression_final: '(' expression ')' = [$1]
-                | function
-                | t_symbol = get_variable($0)
-                | t_number = number($0)
-                ;

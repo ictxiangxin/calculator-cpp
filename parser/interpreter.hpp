@@ -1,5 +1,5 @@
 /*
-    Boson v1.5 - Grammar analyzer generator
+    Boson v1.5 - Grammar Analyzer Generator
 
         Author: ict
         Email:  ictxiangxin@hotmail.com
@@ -42,15 +42,15 @@ namespace boson {
 
     private:
         std::unordered_map<int, std::string> _reduce_number_grammar_name_mapping = {
-            {15, "set_variable"}, 
-            {1, "function"}, 
-            {11, "compute"}, 
-            {10, "compute"}, 
-            {2, "compute"}, 
-            {24, "get_variable"}, 
-            {14, "number"}
+            {1, "set_variable"}, 
+            {2, "function"}, 
+            {14, "compute"}, 
+            {8, "compute"}, 
+            {21, "compute"}, 
+            {18, "get_variable"}, 
+            {11, "number"}
         };
-        std::set<int> _naive_reduce_number_set = {3, 5, 7, 12, 14, 17, 19, 21, 23, 24, 25, 26};
+        std::set<int> _naive_reduce_number_set = {3, 9, 10, 11, 12, 13, 16, 18, 20};
         std::unordered_map<std::string, semantic_function> _semantic_action_mapping{};
 
         BosonSemanticsNode<T> _semantics_analysis(BosonGrammarNode &grammar_tree) {

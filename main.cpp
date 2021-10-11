@@ -71,19 +71,18 @@ int main(int argc, char** argv) {
         boson::BosonSemanticsNode<mpfr_t> function_return;
         mpfr_init(function_return.get_data());
         std::string function_name = node[0].get_text();
-        boson::BosonSemanticsNode<mpfr_t> &arguments = node[1];
         if (function_name == "sqrt") {
-            mpfr_sqrt(function_return.get_data(), arguments[0].get_data(), GMP_RNDD);
+            mpfr_sqrt(function_return.get_data(), node[1].get_data(), GMP_RNDD);
         } else if (function_name == "sin") {
-            mpfr_sin(function_return.get_data(), arguments[0].get_data(), GMP_RNDD);
+            mpfr_sin(function_return.get_data(), node[1].get_data(), GMP_RNDD);
         } else if (function_name == "cos") {
-            mpfr_cos(function_return.get_data(), arguments[0].get_data(), GMP_RNDD);
+            mpfr_cos(function_return.get_data(), node[1].get_data(), GMP_RNDD);
         } else if (function_name == "tan") {
-            mpfr_tan(function_return.get_data(), arguments[0].get_data(), GMP_RNDD);
+            mpfr_tan(function_return.get_data(), node[1].get_data(), GMP_RNDD);
         } else if (function_name == "pow") {
-            mpfr_pow(function_return.get_data(), arguments[0].get_data(), arguments[1].get_data(), GMP_RNDD);
+            mpfr_pow(function_return.get_data(), node[1].get_data(), node[2].get_data(), GMP_RNDD);
         } else if (function_name == "print") {
-            mpfr_printf("%.32Rf\n", arguments[0].get_data());
+            mpfr_printf("%.32Rf\n", node[1].get_data());
             return boson::BosonSemanticsNode<mpfr_t>::null_node();
         }
         return function_return;
