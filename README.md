@@ -29,7 +29,7 @@ statement: t_symbol '=' expression = set_variable($0, $2) # 语句可以是一�
 
 function: t_symbol '(' expression (',' expression)* ')' = function($0, $2, *$3[$1]); # 函数调用由函数名和参数列表组成，使用function动作带入t_symbol和unpack的参数列表。
 
-expression: expression '^' expression = compute($0, $1, $2) # 指数运行，作为最高优先级放在前面。
+expression: expression '^' expression = compute($0, $1, $2) # 指数运算，作为最高优先级放在前面。
           | expression ('*' | '/') expression = compute($0, *$1, $2) # 其次是乘法和除法运算。
           | expression ('+' | '-') expression = compute($0, *$1, $2) # 优先级最低的是加减法。
           | '(' expression ')' = [$1] # 由括号包围的子表达式。
